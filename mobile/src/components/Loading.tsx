@@ -1,9 +1,9 @@
-import { View, Text } from "react-native";
+import { Center, Spinner } from "@gluestack-ui/themed";
 
 export function Loading() {
   return (
-    <View>
-      <Text>Loading...</Text>
-    </View>
+    <Center flex={1} bg="$gray200">
+      <Spinner color="$brand500" size="large" />
+    </Center>
   )
 }
