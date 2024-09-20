@@ -549,7 +549,7 @@ export const gluestackUIConfig = createConfig({
     },
     fonts: {
       heading: 'Karla_700Bold',
-      body: 'Karla_700Regular',
+      body: 'Karla_400Regular',
       mono: undefined,
     },
     fontSizes: {
