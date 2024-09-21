@@ -1,10 +1,12 @@
 import { ComponentProps } from "react";
-import { Button as GluestackButton, Text, ButtonSpinner } from "@gluestack-ui/themed";
+import { Button as GluestackButton, Text, ButtonSpinner, Icon, HStack } from "@gluestack-ui/themed";
+import { LucideProps } from "lucide-react-native";
 
 type ButtonProps = ComponentProps<typeof GluestackButton> & {
   title: string;
   bgVariant?: "primary" | "secondary" | "dark";
   isLoading?: boolean;
+  btnIcon?: React.ComponentType<LucideProps>;
 }
 
 const backgroundMap = {
@@ -19,14 +21,14 @@ const textColorMap = {
   dark: "$gray100",
 };
 
-export function Button({ title, bgVariant = "primary", isLoading = false, ...rest }: ButtonProps) {
+export function Button({ title, bgVariant = "primary", isLoading = false, btnIcon, ...rest }: ButtonProps) {
   const bgColor = backgroundMap[bgVariant];
   const textColor = textColorMap[bgVariant];
 
   return (
     <GluestackButton
       w="$full"
-      h="$14"
+      h="$11"
       rounded="$md"
       bg={bgColor}
       disabled={isLoading}
@@ -35,11 +37,10 @@ export function Button({ title, bgVariant = "primary", isLoading = false, ...res
       {
         isLoading ?
         <ButtonSpinner color="$white" /> : (
-          <Text
-            color={textColor}
-            fontFamily="$heading"
-            fontSize="$sm"
-          >{title} </Text>
+          <HStack>
+            {btnIcon && <Icon as={btnIcon} size="md" color={textColor} />}
+            <Text fontFamily="$heading" fontSize="$sm" color={textColor}> {title}</Text>
+          </HStack>
         )
       }
     </GluestackButton>

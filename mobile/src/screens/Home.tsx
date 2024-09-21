@@ -1,17 +1,13 @@
-import { Center, Heading, Icon, Image } from "@gluestack-ui/themed";
-import { PartyPopper } from "lucide-react-native";
+import { ScrollView, VStack  } from "@gluestack-ui/themed";
 
-import Logo from "@assets/logo.svg";
+import { HeaderHome } from "@components/HeaderHome";
 
 export function Home() {
   return (
-    <Center flex={1} bg="$gray200">
-      <Logo />
-
-      <Icon as={PartyPopper} size="xl" />
-      <Heading fontSize="$2xl">
-        Home
-        </Heading>
-    </Center>
+    <ScrollView contentContainerStyle={{ flexGrow: 1}} showsVerticalScrollIndicator={false}>
+      <VStack flex={1} bg="$gray200" py="$16" px="$6">
+        <HeaderHome />
+      </VStack>
+    </ScrollView>
   )
 }
