@@ -1,6 +1,8 @@
-import { Box, Heading, Text, VStack } from "@gluestack-ui/themed";
+import { Box, Heading, ScrollView, Text, VStack } from "@gluestack-ui/themed";
 
+import { Input } from "@components/Input";
 import { Button } from "@components/Button";
+import { UserPhoto } from "@components/UserPhoto";
 
 import LogoIcon from "@assets/logoIcon.svg";
 
@@ -13,7 +15,7 @@ const Header = () => (
 );
 
 const Footer = () => (
-  <VStack h="$48" justifyContent="center" alignContent="center" px="$12">
+  <VStack py="$8" justifyContent="center" alignContent="center">
     <Text fontSize="$sm" fontFamily="$body" color="$gray600" textAlign="center" mb="$6">Já tem uma conta?</Text>
     <Button title="Ir para o login" bgVariant="secondary" />
   </VStack>
@@ -21,15 +23,40 @@ const Footer = () => (
 
 export function SignUp() {
   return (
-    <VStack flex={1} bg="$gray200">
-      <Box flex={1} w="100%" bg="$gray200" py="$16" px="$12" borderBottomLeftRadius={24} borderBottomRightRadius={24}>
-        <Header />
+    <ScrollView contentContainerStyle={{ flexGrow: 1}} showsVerticalScrollIndicator={false}>
+      <VStack flex={1} bg="$gray200" py="$16" px="$12">
+          <Header />
 
-        <VStack mt="$16">
-          <Button title="Criar" bgVariant="dark" />
-        </VStack>
-      </Box>
+
+            <UserPhoto />
+
+            <Input 
+              placeholder="Nome"
+            />
+
+            <Input 
+              placeholder="E-mail"
+              keyboardType="email-address"
+            />
+
+            <Input 
+              placeholder="Telefone"
+              keyboardType="phone-pad"
+            />
+
+            <Input 
+              placeholder="Senha"
+              isPasswordField
+            />
+
+            <Input 
+              placeholder="Confirmar senha"
+              isPasswordField
+            />
+
+            <Button title="Criar" bgVariant="dark" mt="$4" />
       <Footer />
-    </VStack>
+      </VStack>
+    </ScrollView>
   );
 }

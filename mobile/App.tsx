@@ -16,7 +16,7 @@ export default function App() {
     <GluestackUIProvider config={config}>
       <StatusBar style="dark" backgroundColor="transparent" translucent />
 
-      {fontsLoaded ? <SignIn /> : <Loading />} 
+      {fontsLoaded ? <SignUp /> : <Loading />} 
     </GluestackUIProvider>
   );
 }
