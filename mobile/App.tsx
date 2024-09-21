@@ -5,9 +5,7 @@ import { GluestackUIProvider } from "@gluestack-ui/themed";
 import { config } from "@gluestack-ui";
 
 import { Loading } from "@components/Loading";
-import { Home } from "@screens/Home";
-import { SignIn } from "@screens/SignIn";
-import { SignUp } from "@screens/SignUp";
+import { Routes } from "@routes/index";
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Karla_400Regular, Karla_700Bold });
@@ -16,7 +14,7 @@ export default function App() {
     <GluestackUIProvider config={config}>
       <StatusBar style="dark" backgroundColor="transparent" translucent />
 
-      {fontsLoaded ? <Home /> : <Loading />} 
+      {fontsLoaded ? <Routes /> : <Loading />} 
     </GluestackUIProvider>
   );
 }

@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { Text, VStack, HStack, Icon } from "@gluestack-ui/themed";
 import { ArrowRight, Tag } from "lucide-react-native";
 
-export function MyAdsCard() {
+export function QuantityAdsWrapper() {
   return (
     <TouchableOpacity>
       <HStack bg="$brand100" p="$4" justifyContent="space-between" alignItems="center" rounded="$md" mb="$6">

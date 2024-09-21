@@ -31,7 +31,7 @@ export function Input({
     <FormControl isInvalid={invalid} w="$full" mb="$4">
       <GluestackInput
         isInvalid={isInvalid}
-        h="$14"
+        h="$11"
         borderWidth="$0"
         borderRadius="$md"
         $focus={{

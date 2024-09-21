@@ -1,7 +1,7 @@
 import { ScrollView, Text, VStack } from "@gluestack-ui/themed";
 
 import { HeaderHome } from "@components/HeaderHome";
-import { MyAdsCard } from "@components/MyAdsCard";
+import { QuantityAdsWrapper } from "@components/QuantityAdsWrapper";
 
 export function Home() {
   return (
@@ -11,7 +11,7 @@ export function Home() {
 
         <VStack space="md" mt="$8">
           <Text fontFamily="$body" fontSize="$sm" color="$gray500">Seus produtos anunciados para venda</Text>
-          <MyAdsCard />
+          <QuantityAdsWrapper />
 
           <Text fontFamily="$body" fontSize="$sm" color="$gray500">Compre produtos variados</Text>
 
