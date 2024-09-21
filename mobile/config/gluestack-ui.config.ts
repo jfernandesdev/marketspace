@@ -29,6 +29,7 @@ export const gluestackUIConfig = createConfig({
     colors: {
       brand400: '#647AC7',
       brand500: '#364D9D',
+      brand100: 'rgba(100, 122, 199, 0.1)',
       rose50: '#fff1f2',
       rose100: '#ffe4e6',
       rose200: '#fecdd3',
