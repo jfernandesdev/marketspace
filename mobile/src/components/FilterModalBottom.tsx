@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import { Platform, TouchableOpacity } from "react-native";
 
 import { Button } from "@components/Button";
+import { Radio } from "./Radio";
 import { Checkbox } from "@components/Checkbox";
 
 import { X } from "lucide-react-native";
+
+import { gluestackUIConfig } from "@gluestack-ui";
 
 import {
   Icon,
@@ -21,6 +24,8 @@ import {
   VStack,
   KeyboardAvoidingView,
   CheckboxGroup,
+  Switch,
+  RadioGroup
 } from "@gluestack-ui/themed";
 
 type FilterActionsheetProps = {
@@ -28,12 +33,24 @@ type FilterActionsheetProps = {
   onClose: () => void;
 };
 
-export function FilterModal({ isOpen, onClose }: FilterActionsheetProps) {
-  const [selectedPaymentMethods, setSelectedPaymentMethods] = useState<string[]>([]); 
+export function FilterModalBottom({ isOpen, onClose }: FilterActionsheetProps) {
+  const [selectedPaymentMethods, setSelectedPaymentMethods] = useState<string[]>([]);
+  const [selectedCondition, setSelectedCondition] = useState<string>("novo");
+  const [acceptTrade, setAcceptTrade] = useState(false);
 
-  const handleCheckboxChange = (newValues: string[]) => {
+  const handleConditionChange = (value: string) => {
+    setSelectedCondition(value);
+    console.log("Condição:", value);
+  };
+
+  const handleAcceptTradeChange = (value: boolean) => {
+    setAcceptTrade(value);
+    console.log("Aceita troca?:", value);
+  };
+
+  const handlePaymentMethodsChange = (newValues: string[]) => {
     setSelectedPaymentMethods(newValues);
-    console.log("Meios de pagamento ==>", newValues);
+    console.log("Meios de pagamento:", newValues);
   };
 
   return (
@@ -54,24 +71,37 @@ export function FilterModal({ isOpen, onClose }: FilterActionsheetProps) {
             </HStack>
 
             <VStack justifyContent="flex-start">
-              <Text fontFamily="$heading" fontSize="$sm" color="$gray600" py="$4">Condição</Text>
-              <HStack space="md">
-                <Text>NOVO</Text>
-                <Text>USADO</Text>
+              <Text fontFamily="$heading" fontSize="$sm" color="$gray600" mt="$4" mb="$2">Condição</Text>
+              <RadioGroup value={selectedCondition} onChange={handleConditionChange}>
+                <HStack space="lg" alignItems="center">
+                  <Radio 
+                    label="Novo" 
+                    value="novo" 
+                    aria-label="Novo" 
+                    isChecked={selectedCondition === 'novo'}
+                  />
+                  <Radio 
+                    label="Usado" 
+                    value="usado" 
+                    aria-label="Usado"
+                    isChecked={selectedCondition === 'usado'} 
+                  />
+                </HStack>
+              </RadioGroup>
+
+              <HStack space="xs" alignItems="center" my="$3">
+                <Text fontFamily="$heading" fontSize="$sm" color="$gray600" onPress={() => { setAcceptTrade(!acceptTrade) }}>Aceita troca?</Text>
+                <Switch value={acceptTrade} onValueChange={handleAcceptTradeChange} />
               </HStack>
 
-              <Text fontFamily="$heading" fontSize="$sm" color="$gray600" py="$4">Aceita troca?</Text>
-
-              <Text fontFamily="$heading" fontSize="$sm" color="$gray600" py="$4">Meios de pagamento aceitos</Text>
-
-              <CheckboxGroup value={selectedPaymentMethods} onChange={handleCheckboxChange}>
+              <Text fontFamily="$heading" fontSize="$sm" color="$gray600" py="$2">Meios de pagamento aceitos</Text>
+              <CheckboxGroup value={selectedPaymentMethods} onChange={handlePaymentMethodsChange}>
                 <Checkbox label="Boleto" value="boleto" aria-label="Boleto" />
                 <Checkbox label="Pix" value="pix" aria-label="PIX" />
                 <Checkbox label="Dinheiro" value="dinheiro" aria-label="Dinheiro" />
                 <Checkbox label="Cartão de Crédito" value="cartao-credito" aria-label="Cartão de Crédito" />
                 <Checkbox label="Depósito Bancário" value="deposito-bancario" aria-label="Depósito Bancário" />
               </CheckboxGroup>
-
             </VStack>
 
             <HStack space="md" pt="$10">

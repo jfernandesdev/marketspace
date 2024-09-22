@@ -14,7 +14,7 @@ import {
   HStack
 } from "@gluestack-ui/themed";
 
-import { FilterModal } from "@components/FilterModal";
+import { FilterModalBottom } from "@components/FilterModalBottom";
 
 type InputProps = ComponentProps<typeof InputField> & {
   isReadOnly?: boolean;
@@ -118,7 +118,7 @@ export function Input({
         </FormControlErrorText>
       </FormControlError>
 
-      <FilterModal isOpen={showFilterModal} onClose={() => setShowFilterModal(false)} />
+      <FilterModalBottom isOpen={showFilterModal} onClose={() => setShowFilterModal(false)} />
 
     </FormControl>
   );

@@ -703,7 +703,7 @@ export const gluestackUIConfig = createConfig({
             shadowOpacity: 0.2,
           },
         },
-      },
+      }
     },
   },
   plugins: [new AnimationResolver(MotionAnimationDriver)],
