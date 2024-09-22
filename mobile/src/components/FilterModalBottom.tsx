@@ -35,12 +35,12 @@ type FilterActionsheetProps = {
 
 export function FilterModalBottom({ isOpen, onClose }: FilterActionsheetProps) {
   const [selectedPaymentMethods, setSelectedPaymentMethods] = useState<string[]>([]);
-  const [selectedCondition, setSelectedCondition] = useState<string>("novo");
+  const [selectedCondition, setSelectedCondition] = useState<string[]>(["novo"]);
   const [acceptTrade, setAcceptTrade] = useState(false);
 
-  const handleConditionChange = (value: string) => {
-    setSelectedCondition(value);
-    console.log("Condição:", value);
+  const handleConditionChange = (newValues: string[]) => {
+    setSelectedCondition(newValues);
+    console.log("Condições:", newValues);
   };
 
   const handleAcceptTradeChange = (value: boolean) => {
@@ -72,22 +72,24 @@ export function FilterModalBottom({ isOpen, onClose }: FilterActionsheetProps) {
 
             <VStack justifyContent="flex-start">
               <Text fontFamily="$heading" fontSize="$sm" color="$gray600" mt="$4" mb="$2">Condição</Text>
-              <RadioGroup value={selectedCondition} onChange={handleConditionChange}>
+              <CheckboxGroup value={selectedCondition} onChange={handleConditionChange}>
                 <HStack space="lg" alignItems="center">
-                  <Radio 
+                  <Checkbox 
                     label="Novo" 
                     value="novo" 
                     aria-label="Novo" 
-                    isChecked={selectedCondition === 'novo'}
+                    type="custom"
+                    isChecked={selectedCondition.includes("novo")}
                   />
-                  <Radio 
+                  <Checkbox 
                     label="Usado" 
                     value="usado" 
-                    aria-label="Usado"
-                    isChecked={selectedCondition === 'usado'} 
+                    aria-label="Usado" 
+                    type="custom"
+                    isChecked={selectedCondition.includes("usado")}
                   />
                 </HStack>
-              </RadioGroup>
+              </CheckboxGroup>
 
               <HStack space="xs" alignItems="center" my="$3">
                 <Text fontFamily="$heading" fontSize="$sm" color="$gray600" onPress={() => { setAcceptTrade(!acceptTrade) }}>Aceita troca?</Text>

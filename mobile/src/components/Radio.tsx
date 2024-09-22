@@ -24,6 +24,7 @@ export function Radio({ label, value, isChecked, ...rest }: RadioProps) {
         <RadioLabel color={isChecked ? "$gray100" : "$gray600"}>
           {label}
         </RadioLabel>
+        {isChecked && <Icon as={CircleX} color="$brand400" fill="$gray100" size="sm"/>}
       </HStack>
     </GluestackRadio>
   );
