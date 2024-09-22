@@ -5,6 +5,7 @@ import { Box } from "@gluestack-ui/themed";
 import { Loading } from "@components/Loading";
 
 import { AuthRoutes } from "./auth.routes";
+import { AppRoutes } from "./app.routes";
 
 export function Routes() {
   const theme = DefaultTheme;
@@ -13,7 +14,7 @@ export function Routes() {
   return (
     <Box flex={1} bg="$gray200">
       <NavigationContainer theme={theme}>
-          <AuthRoutes />
+        <AppRoutes />
       </NavigationContainer>
     </Box>
   )

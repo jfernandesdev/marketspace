@@ -21,7 +21,7 @@ export function HeaderHome() {
         title="Criar anúncio" 
         btnIcon={Plus}
         bgVariant="dark" 
-        w={150} 
+        w={139} 
       />
     </HStack>
   );
