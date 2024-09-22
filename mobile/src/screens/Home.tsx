@@ -1,10 +1,11 @@
-import { ScrollView, Text, VStack } from "@gluestack-ui/themed";
+import { HStack, Icon, ScrollView, Text, VStack } from "@gluestack-ui/themed";
 
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
 import { HeaderHome } from "@components/HeaderHome";
 import { QuantityAdsWrapper } from "@components/QuantityAdsWrapper";
+import { Input } from "@components/Input";
 
 export function Home() {
   const navigation = useNavigation<AppNavigatorRoutesProps>();
@@ -20,7 +21,13 @@ export function Home() {
 
           <Text fontFamily="$body" fontSize="$sm" color="$gray500">Compre produtos variados</Text>
 
-    
+          <Input 
+            placeholder="Buscar anúncio"
+            returnKeyType="search"
+            showIconSearch
+            showIconFilter
+          />
+
         </VStack>
       </VStack>
     </ScrollView>

@@ -43,7 +43,7 @@ export function AppRoutes() {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarActiveTintColor: tokens.colors.gray600,
-        tabBarInactiveTintColor: tokens.colors.gray200,
+        tabBarInactiveTintColor: tokens.colors.gray400,
         tabBarStyle: {
           backgroundColor: tokens.colors.white,
           borderTopWidth: 0,
