@@ -18,7 +18,7 @@ type AppRoutes = {
   home: undefined;
   myAds: undefined;
   adDetails: undefined;
-  adForm: undefined;
+  adForm: { type: "ADD" | "EDIT" };
   signOut: undefined;
 }
 

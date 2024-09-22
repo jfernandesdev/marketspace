@@ -1,9 +1,14 @@
 import { ScrollView, Text, VStack } from "@gluestack-ui/themed";
 
+import { useNavigation } from "@react-navigation/native";
+import { AppNavigatorRoutesProps } from "@routes/app.routes";
+
 import { HeaderHome } from "@components/HeaderHome";
 import { QuantityAdsWrapper } from "@components/QuantityAdsWrapper";
 
 export function Home() {
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
+
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
       <VStack flex={1} bg="$gray200" py="$16" px="$6">

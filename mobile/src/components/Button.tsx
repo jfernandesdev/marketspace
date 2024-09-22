@@ -37,8 +37,8 @@ export function Button({ title, bgVariant = "primary", isLoading = false, btnIco
       {
         isLoading ?
         <ButtonSpinner color="$white" /> : (
-          <HStack>
-            {btnIcon && <Icon as={btnIcon} size="md" color={textColor} />}
+          <HStack alignItems="center" space="xs">
+            {btnIcon && <Icon as={btnIcon} size="xs" color={textColor} />}
             <Text fontFamily="$heading" fontSize="$sm" color={textColor}> {title}</Text>
           </HStack>
         )
