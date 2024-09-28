@@ -17,17 +17,19 @@ export function AdForm() {
   }
 
   const handleNext = () => {
-    navigation.navigate("adDetails");
+    navigation.navigate("adStack", {
+      screen: "adDetails"
+    });
   }
 
   return (
-    <VStack flex={1} justifyContent="space-between">
+    <VStack flex={1} justifyContent="space-between" pb="$6">
       <ScreenHeader 
         title={type === "EDIT" ? "Editar anúncio" : "Criar anúncio" } 
         showBackButton 
       />
 
-    <HStack space="md" px="$8" py="$4">
+    <HStack space="md" px="$8">
       <Button 
         title="Cancelar" 
         w="48%" 

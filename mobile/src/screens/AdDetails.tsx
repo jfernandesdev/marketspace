@@ -6,11 +6,10 @@ import { Power, Trash } from "lucide-react-native";
 
 export function AdDetails() {
   return (
-    <VStack flex={1} justifyContent="space-between">
+    <VStack flex={1} justifyContent="space-between" pb="$6">
       <ScreenHeader showBackButton showEditButton />
 
       <VStack px="$8">
-
         <Button 
           title="Desativar anúncio" 
           bgVariant="dark"

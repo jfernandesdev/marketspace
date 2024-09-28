@@ -12,7 +12,10 @@ export function HeaderHome() {
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   const handleCreateAd = () => {
-    navigation.navigate("adForm", { type: "ADD"});
+    navigation.navigate("adStack", {
+      screen: "adForm", 
+      params: { type: "ADD" } 
+    });
   }
 
   return (

@@ -22,7 +22,10 @@ export function ScreenHeader({
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   const handleFormAd = (type: "ADD" | "EDIT") => {
-    navigation.navigate("adForm", { type });
+    navigation.navigate("adStack", {
+      screen: "adForm",
+      params: { type }
+    });
   }
 
   const handleGoBack = () => {

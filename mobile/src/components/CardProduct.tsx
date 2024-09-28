@@ -49,7 +49,9 @@ export function CardProduct({ thumbnail, condition, title, price, ative, showAva
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   const handleSeeDetailsAd = () => {
-    navigation.navigate("adDetails");
+    navigation.navigate("adStack", {
+      screen: "adDetails"
+    });
   };
 
   const formattedPrice = price
@@ -84,6 +86,7 @@ export function CardProduct({ thumbnail, condition, title, price, ative, showAva
               size="xs"
               borderWidth={1}
               borderColor="$white"
+              opacity={ative ? 1 : 0.45}
             />
           ): <Box />}
           <Box
