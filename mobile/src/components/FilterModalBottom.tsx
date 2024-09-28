@@ -2,30 +2,24 @@ import React, { useState } from "react";
 import { Platform, TouchableOpacity } from "react-native";
 
 import { Button } from "@components/Button";
-import { Radio } from "./Radio";
 import { Checkbox } from "@components/Checkbox";
 
 import { X } from "lucide-react-native";
-
-import { gluestackUIConfig } from "@gluestack-ui";
 
 import {
   Icon,
   Text,
   HStack,
+  VStack,
   Heading,
+  Switch,
   Actionsheet,
-  ActionsheetItem,
+  CheckboxGroup,
   ActionsheetContent,
   ActionsheetBackdrop,
-  ActionsheetItemText,
-  ActionsheetDragIndicator,
-  ActionsheetDragIndicatorWrapper,
-  VStack,
   KeyboardAvoidingView,
-  CheckboxGroup,
-  Switch,
-  RadioGroup
+  ActionsheetDragIndicator,
+  ActionsheetDragIndicatorWrapper
 } from "@gluestack-ui/themed";
 
 type FilterActionsheetProps = {
