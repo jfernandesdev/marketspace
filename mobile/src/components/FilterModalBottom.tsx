@@ -95,8 +95,8 @@ export function FilterModalBottom({ isOpen, onClose }: FilterActionsheetProps) {
                 <Checkbox label="Boleto" value="boleto" aria-label="Boleto" />
                 <Checkbox label="Pix" value="pix" aria-label="PIX" />
                 <Checkbox label="Dinheiro" value="dinheiro" aria-label="Dinheiro" />
-                <Checkbox label="Cartão de Crédito" value="cartao-credito" aria-label="Cartão de Crédito" />
-                <Checkbox label="Depósito Bancário" value="deposito-bancario" aria-label="Depósito Bancário" />
+                <Checkbox label="Cartão de Crédito" value="cartaoCredito" aria-label="Cartão de Crédito" />
+                <Checkbox label="Depósito Bancário" value="depositoBancario" aria-label="Depósito Bancário" />
               </CheckboxGroup>
             </VStack>
 

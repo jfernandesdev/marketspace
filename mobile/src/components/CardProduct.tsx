@@ -5,6 +5,8 @@ import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
 import { Avatar } from "@components/Avatar";
 
+import { formatPrice } from "@utils/formatPrice";
+
 
 type CardProductProps = {
   id: string;
@@ -53,16 +55,6 @@ export function CardProduct({ thumbnail, condition, title, price, ative, showAva
       screen: "adDetails"
     });
   };
-
-  const formattedPrice = price
-    ? price.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      signDisplay: 'never',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })
-    : "0,00";
 
   const getConditionColor = () => (condition === "NOVO" ? "$brand500" : "$black");
   const getTextColor = () => (ative ? "$gray600" : "$gray400");
@@ -133,7 +125,7 @@ export function CardProduct({ thumbnail, condition, title, price, ative, showAva
             fontSize="$md"
             color={getTextColor()}
           >
-            {formattedPrice}
+            {formatPrice(price)}
           </Text>
         </HStack>
       </VStack>

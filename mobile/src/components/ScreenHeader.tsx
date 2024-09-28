@@ -33,7 +33,7 @@ export function ScreenHeader({
   }
 
   return(
-    <HStack pt="$16" justifyContent="space-between" alignItems="center" px="$8">
+    <HStack justifyContent="space-between" alignItems="center" px="$8" pt="$16" pb="$4" >
       {showBackButton ? (
         <TouchableOpacity onPress={handleGoBack}>
           <Icon as={ArrowLeft} size="xl" />

@@ -1,4 +1,4 @@
-import { Center, Text, VStack, HStack } from "@gluestack-ui/themed";
+import { VStack, HStack } from "@gluestack-ui/themed";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
