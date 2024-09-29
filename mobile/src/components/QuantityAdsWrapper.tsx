@@ -1,11 +1,21 @@
 
 import { TouchableOpacity } from "react-native";
 import { Text, VStack, HStack, Icon } from "@gluestack-ui/themed";
+
+import { useNavigation } from "@react-navigation/native";
+import { AppNavigatorRoutesProps } from "@routes/app.routes";
+
 import { ArrowRight, Tag } from "lucide-react-native";
 
 export function QuantityAdsWrapper() {
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
+
+  const goToMyAds = () => {
+    navigation.navigate("myAds");
+  }
+
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={goToMyAds}>
       <HStack bg="$brand100" p="$4" justifyContent="space-between" alignItems="center" rounded="$md" mb="$6">
         <HStack space="md" alignItems="center">
           <Icon as={Tag} color="$brand500" size="xl" />

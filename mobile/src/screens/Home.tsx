@@ -1,3 +1,4 @@
+import { FlatList } from "react-native";
 import { Text, VStack } from "@gluestack-ui/themed";
 
 import { HeaderHome } from "@components/HeaderHome";
@@ -6,7 +7,6 @@ import { Input } from "@components/Input";
 import { CardProduct } from "@components/CardProduct";
 
 import data, { Product } from "@storage/mock-products";
-import { FlatList } from "react-native";
 
 export function Home() {
   return (
@@ -14,7 +14,7 @@ export function Home() {
       <HeaderHome />
 
       <VStack space="md" mt="$8">
-        <Text fontFamily="$body" fontSize="$sm" color="$gray500">Seus produtos anunciados para venda</Text>
+        <Text fontFamily="$body" fontSize="$sm" color="$gray500">Seus produtos anunciados para troca/venda</Text>
         <QuantityAdsWrapper />
 
         <Text fontFamily="$body" fontSize="$sm" color="$gray500">Compre produtos variados</Text>
