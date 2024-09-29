@@ -1,31 +1,24 @@
 import { ComponentProps } from "react";
-import {  Radio as GluestackRadio, RadioLabel, HStack, Icon } from "@gluestack-ui/themed";
-
-import { CircleX } from "lucide-react-native";
+import {  
+  Radio as GluestackRadio, 
+  RadioLabel, 
+  RadioIndicator, 
+  RadioIcon, 
+  CircleIcon 
+} from "@gluestack-ui/themed";
 
 type RadioProps = ComponentProps<typeof GluestackRadio> & {
   label: string;
   value: string;
-  isChecked?: boolean;
 };
 
-export function Radio({ label, value, isChecked, ...rest }: RadioProps) {
+export function Radio({ label, value, ...rest }: RadioProps) {
   return (
     <GluestackRadio value={value} {...rest}>
-      <HStack
-        p="$2"
-        minWidth={90}
-        justifyContent="center"
-        space="xs"
-        bg={isChecked ? "$brand400" : "$gray300"}
-        borderRadius="$full"
-        alignItems="center"
-      >
-        <RadioLabel color={isChecked ? "$gray100" : "$gray600"}>
-          {label}
-        </RadioLabel>
-        {isChecked && <Icon as={CircleX} color="$brand400" fill="$gray100" size="sm"/>}
-      </HStack>
+      <RadioIndicator mr="$2">
+      <RadioIcon as={CircleIcon} color="$brand400" size="2xs" />
+      </RadioIndicator>
+      <RadioLabel>{label}</RadioLabel>
     </GluestackRadio>
   );
 }

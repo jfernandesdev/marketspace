@@ -28,7 +28,7 @@ const PaymentMethodsList = ({ paymentMethods }: PaymentMethodsListProps) => {
   return (
     <>
       {paymentMethods.map((method) => (
-        <HStack key={method} mt="$0" space="md">
+        <HStack key={method} mt="$2" space="md">
           <Icon as={PaymentIcons[method]} />
           <Text fontFamily="$body" color="$gray600" fontSize="$sm">
             {PaymentLabels[method]}

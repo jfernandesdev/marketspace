@@ -9,7 +9,7 @@ interface ImageSliderProps {
 
 const { width } = Dimensions.get('window');
 
-export default function ImageSlider({ images, isActive = true}: ImageSliderProps) {
+export function ImageSlider({ images, isActive = true }: ImageSliderProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleScroll = (event: any) => {
@@ -60,7 +60,7 @@ export default function ImageSlider({ images, isActive = true}: ImageSliderProps
           h="$full"
           backgroundColor="rgba(26, 24, 27, 0.5)"
         >
-          <Text color="$gray100" fontSize="$sm" fontFamily="$heading" >
+          <Text color="$gray100" fontSize="$sm" fontFamily="$heading">
             ANÚNCIO DESATIVADO
           </Text>
         </Center>

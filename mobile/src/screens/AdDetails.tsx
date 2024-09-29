@@ -6,8 +6,9 @@ import { ArrowLeft, Power, Tag, Trash } from "lucide-react-native";
 import { Button } from "@components/Button";
 import { ScreenHeader } from "@components/ScreenHeader";
 import { PreviewHeader } from "@components/PreviewHeader";
-import ImageSlider from "@components/ImageSlider";
+import { ImageSlider } from "@components/ImageSlider";
 import { Avatar } from "@components/Avatar";
+import { Label } from "@components/Label";
 import PaymentMethodsList, { PaymentMethod } from "@components/PaymentMethodsList";
 
 import WhatsappIcon from "@assets/whatsapp-logo.svg";
@@ -86,12 +87,12 @@ export function AdDetails() {
           </Box>
 
           <HStack py="$2" space="md">
-            <Text fontFamily="$heading" color="$gray600" fontSize="$sm">Aceita troca?</Text>
+            <Label text="Aceita troca?" />
             <Text fontFamily="$body" color="$gray600" fontSize="$sm">Sim</Text>
           </HStack>
 
-          <VStack mt="$2" space="md">
-            <Text fontFamily="$heading" color="$gray600" fontSize="$sm">Meios de pagamento:</Text>
+          <VStack mt="$2">
+            <Label text="Meios de pagamento:" />
             <PaymentMethodsList paymentMethods={paymentMethods} />
           </VStack>
 

@@ -3,6 +3,8 @@ import { Platform, TouchableOpacity } from "react-native";
 
 import { Button } from "@components/Button";
 import { Checkbox } from "@components/Checkbox";
+import { Label } from "@components/Label";
+import { PaymentMethodsCheckbox } from "@components/PaymentMethodsCheckbox";
 
 import { X } from "lucide-react-native";
 
@@ -28,23 +30,12 @@ type FilterActionsheetProps = {
 };
 
 export function FilterModalBottom({ isOpen, onClose }: FilterActionsheetProps) {
-  const [selectedPaymentMethods, setSelectedPaymentMethods] = useState<string[]>([]);
   const [selectedCondition, setSelectedCondition] = useState<string[]>(["novo"]);
   const [acceptTrade, setAcceptTrade] = useState(false);
 
   const handleConditionChange = (newValues: string[]) => {
     setSelectedCondition(newValues);
     console.log("Condições:", newValues);
-  };
-
-  const handleAcceptTradeChange = (value: boolean) => {
-    setAcceptTrade(value);
-    console.log("Aceita troca?:", value);
-  };
-
-  const handlePaymentMethodsChange = (newValues: string[]) => {
-    setSelectedPaymentMethods(newValues);
-    console.log("Meios de pagamento:", newValues);
   };
 
   return (
@@ -58,15 +49,15 @@ export function FilterModalBottom({ isOpen, onClose }: FilterActionsheetProps) {
 
           <VStack w="$full" px="$6" py="$6">
             <HStack justifyContent="space-between" alignItems="center" mb="$2">
-              <Heading fontFamily="$heading" color="$gray700" fontSize="$xl">Filtrar anúncios</Heading>
+              <Heading fontFamily="$heading" color="$gray700" fontSize="$xl" mb="$2">Filtrar anúncios</Heading>
               <TouchableOpacity onPress={onClose}>
                 <Icon as={X} color="$gray400" size="xl" />
               </TouchableOpacity>
             </HStack>
 
             <VStack justifyContent="flex-start">
-              <Text fontFamily="$heading" fontSize="$sm" color="$gray600" mt="$4" mb="$2">Condição</Text>
-              <CheckboxGroup value={selectedCondition} onChange={handleConditionChange}>
+              <Label text="Condição" />
+              <CheckboxGroup value={selectedCondition} onChange={handleConditionChange} mt="$2">
                 <HStack space="lg" alignItems="center">
                   <Checkbox 
                     label="Novo" 
@@ -83,23 +74,17 @@ export function FilterModalBottom({ isOpen, onClose }: FilterActionsheetProps) {
                     isChecked={selectedCondition.includes("usado")}
                   />
                 </HStack>
-              </CheckboxGroup>
+              </CheckboxGroup> 
 
               <HStack space="xs" alignItems="center" my="$3">
-                <Text fontFamily="$heading" fontSize="$sm" color="$gray600" onPress={() => { setAcceptTrade(!acceptTrade) }}>Aceita troca?</Text>
-                <Switch value={acceptTrade} onValueChange={handleAcceptTradeChange} />
+                <Label text="Aceita troca?" onPress={() => { setAcceptTrade(!acceptTrade) }} />
+                <Switch value={acceptTrade} onValueChange={setAcceptTrade} />
               </HStack>
 
-              <Text fontFamily="$heading" fontSize="$sm" color="$gray600" py="$2">Meios de pagamento aceitos</Text>
-              <CheckboxGroup value={selectedPaymentMethods} onChange={handlePaymentMethodsChange}>
-                <Checkbox label="Boleto" value="boleto" aria-label="Boleto" />
-                <Checkbox label="Pix" value="pix" aria-label="PIX" />
-                <Checkbox label="Dinheiro" value="dinheiro" aria-label="Dinheiro" />
-                <Checkbox label="Cartão de Crédito" value="cartaoCredito" aria-label="Cartão de Crédito" />
-                <Checkbox label="Depósito Bancário" value="depositoBancario" aria-label="Depósito Bancário" />
-              </CheckboxGroup>
+              <Label text="Meios de pagamento aceitos" />
+              <PaymentMethodsCheckbox />
             </VStack>
-
+            
             <HStack space="md" pt="$10">
               <Button
                 title="Resetar filtros"
