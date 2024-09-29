@@ -1,17 +1,15 @@
 import { useState } from "react";
-import { TouchableOpacity } from "react-native";
-
 import { useNavigation, useRoute } from "@react-navigation/native";
+
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
-import { Button } from "@components/Button";
 import { Label } from "@components/Label";
 import { Input } from "@components/Input";
 import { Radio } from "@components/Radio";
+import { Button } from "@components/Button";
 import { ScreenHeader } from "@components/ScreenHeader";
+import { ImagePickerCard } from "@components/ImagePickerCard";
 import { PaymentMethodsCheckbox } from "@components/PaymentMethodsCheckbox";
-
-import { Plus, X } from "lucide-react-native";
 
 import {
   VStack,
@@ -20,12 +18,9 @@ import {
   ScrollView,
   Switch,
   RadioGroup,
-  Center,
   Box,
-  Icon,
   Textarea,
   TextareaInput,
-  Image,
 } from "@gluestack-ui/themed";
 
 export function AdForm() {
@@ -63,60 +58,7 @@ export function AdForm() {
           <Text fontFamily="$body" fontSize="$sm" color="$gray500" pb="$2">
             Escolha até 3 imagens para mostrar o quanto o seu produto é incrível!
           </Text>
-
-          <HStack space="md">
-            <TouchableOpacity>
-              <Center bg="$gray300" h={100} w={100} rounded="$md">
-                <Image 
-                  source={{uri: "https://images.unsplash.com/photo-1460353581641-37baddab0fa2" }} 
-                  alt="Imagem produto"
-                  h="$full"
-                  w="$full"
-                  rounded="$md"
-                />
-
-                <Icon 
-                  as={X} 
-                  color="$gray100"
-                  bg="$gray600" 
-                  rounded="$full"
-                  size="sm" 
-                  position="absolute" 
-                  top="$1" 
-                  right="$1" 
-                />
-              </Center>
-            </TouchableOpacity>
-
-            <TouchableOpacity>
-              <Center bg="$gray300" h={100} w={100} rounded="$md">
-                <Image 
-                  source={{ uri: "https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717" }} 
-                  alt="Imagem produto"
-                  h="$full"
-                  w="$full"
-                  rounded="$md" 
-                />
-
-                <Icon
-                  as={X}
-                  color="$gray100"
-                  bg="$gray600"
-                  rounded="$full"
-                  size="sm"
-                  position="absolute"
-                  top="$1"
-                  right="$1"
-                />
-              </Center>
-            </TouchableOpacity>
-
-            <TouchableOpacity>
-              <Center bg="$gray300" h={100} w={100} rounded="$md">
-                <Icon as={Plus} size="xl" color="$gray400" />
-              </Center>
-            </TouchableOpacity>
-          </HStack>
+          <ImagePickerCard />
         </Box>
 
         {/* Sobre o produto */}
@@ -155,7 +97,6 @@ export function AdForm() {
             <Switch value={acceptTrade} onValueChange={setAcceptTrade}/>
           </HStack>
         </Box>
-
 
         {/* Meios de pagamento */}
         <Box mb="$4">
