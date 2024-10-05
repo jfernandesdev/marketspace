@@ -6,7 +6,7 @@ import { AppNavigatorRoutesProps } from "@routes/app.routes";
 import { Avatar } from "@components/Avatar";
 
 import { formatPrice } from "@utils/formatPrice";
-
+import { api } from "@services/api";
 
 type CardProductProps = {
   id: string;
@@ -74,7 +74,7 @@ export function CardProduct({ thumbnail, condition, title, price, ative, showAva
         >
           {showAvatar ? (
             <Avatar
-              image="a2fa96a67ec315d1d31b-1663158098820.jpg"
+              image={`${api.defaults.baseURL}/images/a2fa96a67ec315d1d31b-1663158098820.jpg`}
               textFallback="Jeferson Fernandes"
               size="xs"
               borderWidth={1}

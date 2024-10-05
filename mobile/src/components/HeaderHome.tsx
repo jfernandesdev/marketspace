@@ -3,6 +3,8 @@ import { HStack, Text, VStack } from "@gluestack-ui/themed";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "@hooks/useAuth";
 
+import { api } from "@services/api";
+
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
 import { Button } from "@components/Button";
 import { Avatar } from "@components/Avatar";
@@ -24,7 +26,11 @@ export function HeaderHome() {
   return (
     <HStack justifyContent="space-between">
       <HStack space="sm">
-        <Avatar image={user?.avatar } textFallback={user.name} size="md" />
+        <Avatar 
+          image={`${api.defaults.baseURL}/images/${user?.avatar}`} 
+          textFallback={user.name} 
+          size="md" 
+        />
 
         <VStack space="xs">
           <Text fontSize="$md">Boas vindas,</Text>
