@@ -1,8 +1,17 @@
 import axios from "axios";
-import { BASE_URL } from "@env";
+import { BASE_URL } from '@env';
+import { AppError } from "@utils/AppError";
 
 const api = axios.create({
   baseURL: BASE_URL,
-})
+});
 
-export { api}
+api.interceptors.response.use(response => response, error => {
+  if (error.response && error.response.data) {
+    return Promise.reject(new AppError(error.response.data.message));
+  } else {
+    return Promise.reject(new AppError("Erro no servidor. Tente novamente mais tarde"));
+  }
+});
+
+export { api }
