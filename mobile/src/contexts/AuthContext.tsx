@@ -2,8 +2,8 @@ import { createContext, ReactNode, useState, useEffect } from "react";
 
 import { api } from "@services/api";
 
-import { storageAuthTokenSave, storageAuthTokenGet } from "@storage/storageAuthToken";
-import { storageUserSave, storageUserGet } from "@storage/storageUser";
+import { storageAuthTokenSave, storageAuthTokenGet, storageAuthTokenRemove } from "@storage/storageAuthToken";
+import { storageUserSave, storageUserGet, storageUserRemove } from "@storage/storageUser";
 
 import { UserDto } from "@dtos/UserDto";
 
@@ -43,7 +43,17 @@ export function AuthContextProvider({ children }: AuthContentProviderProps) {
   };
 
   const signOut = async () => {
-    console.log("TODO SIGN OUT");
+    try {
+      setIsLoadingUserStorageData(true);
+
+      setUser({} as UserDto);
+      await storageUserRemove();
+      await storageAuthTokenRemove();
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsLoadingUserStorageData(false);
+    }
   };
 
   const updateUserAndToken = (userData: UserDto, token: string) => {

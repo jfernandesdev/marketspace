@@ -1,9 +1,11 @@
 import { createBottomTabNavigator, BottomTabNavigationProp, } from "@react-navigation/bottom-tabs";
-import { createNativeStackNavigator, NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { Platform } from "react-native";
 import { Icon } from "@gluestack-ui/themed";
 import { gluestackUIConfig } from "@gluestack-ui";
+
+import { useAuth } from "@hooks/useAuth";
 
 import { Home } from "@screens/Home";
 import { MyAds } from "@screens/MyAds";
@@ -31,8 +33,8 @@ type AdStackRoutes = {
 }
 
 type CombinedRoutes = AppRoutes & AdStackRoutes;
-export type AppNavigatorRoutesProps = BottomTabNavigationProp<CombinedRoutes>;
 
+export type AppNavigatorRoutesProps = BottomTabNavigationProp<CombinedRoutes>;
 
 // Criando um BottomTabNavigator para as abas principais
 const Tab = createBottomTabNavigator<AppRoutes>();
@@ -52,12 +54,10 @@ const AdStack = () => {
 export function AppRoutes() {
   const { tokens } = gluestackUIConfig;
   const iconSize = tokens.space["6"];
+  const { signOut } = useAuth();
 
-  // const navigationAuth = useNavigation<AuthNavigatorRoutesProps>();
-
-  const handleSignOut = () => {
-    //todo
-    console.log("signOut");
+  const handleSignOut = async () => {
+    await signOut();
   }
 
   return (
