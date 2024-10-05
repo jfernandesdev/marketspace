@@ -1,14 +1,17 @@
 import { HStack, Text, VStack } from "@gluestack-ui/themed";
 
 import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "@hooks/useAuth";
 
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
 import { Button } from "@components/Button";
 import { Avatar } from "@components/Avatar";
 
 import { Plus } from "lucide-react-native";
+import { getFirstName } from "@utils/firstName";
 
 export function HeaderHome() {
+  const { user } = useAuth();
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   const handleCreateAd = () => {
@@ -21,11 +24,11 @@ export function HeaderHome() {
   return (
     <HStack justifyContent="space-between">
       <HStack space="sm">
-        <Avatar image="https://github.com/jfernandesdev.png" textFallback="Jeferson" size="md" />
+        <Avatar image={user?.avatar } textFallback={user.name} size="md" />
 
         <VStack space="xs">
           <Text fontSize="$md">Boas vindas,</Text>
-          <Text fontFamily="$heading" fontSize="$md">Jeferson!</Text>
+          <Text fontFamily="$heading" fontSize="$md">{getFirstName("Jeferson Fernandes")}!</Text>
         </VStack>
       </HStack>
 

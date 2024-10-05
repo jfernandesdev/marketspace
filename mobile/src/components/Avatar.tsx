@@ -1,4 +1,5 @@
 import { ComponentProps } from "react";
+import { api } from "@services/api";
 
 import {
   Avatar as GluestackAvatar,
@@ -7,15 +8,20 @@ import {
 } from "@gluestack-ui/themed";
 
 type AvatarProps = ComponentProps<typeof GluestackAvatar> & {
-  image: string;
+  image?: string;
   textFallback?: string;
 }
 
-export function Avatar({ image, textFallback, ...rest}: AvatarProps) {
+export function Avatar({ image, textFallback, ...rest }: AvatarProps) {
   return (
-    <GluestackAvatar borderWidth={2} borderColor="$brand400" {...rest}>
-      <AvatarFallbackText >{textFallback}</AvatarFallbackText>
-      <AvatarImage source={{ uri: image}} alt="Foto Perfil" />
+    <GluestackAvatar borderWidth={2} borderColor="$brand400" bg="$brand400" {...rest}>
+      <AvatarFallbackText>{textFallback}</AvatarFallbackText>
+      {image && (
+        <AvatarImage
+          source={{ uri: `${api.defaults.baseURL}/images/${image}` }}
+          alt="Foto Perfil"
+        />
+      )}
     </GluestackAvatar>
   );
 }

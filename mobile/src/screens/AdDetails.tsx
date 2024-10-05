@@ -50,7 +50,7 @@ export function AdDetails() {
 
         <ScrollView px="$8">
           <HStack alignItems="center" space="sm" py="$3">
-            <Avatar image="https://github.com/jfernandesdev.png" size="sm"/>
+            <Avatar image="https://github.com/jfernandesdev.png" textFallback="Jeferson Fernandes" size="sm"/>
             <Text>Jeferson Fernandes</Text>
           </HStack>
 

@@ -74,11 +74,11 @@ export function CardProduct({ thumbnail, condition, title, price, ative, showAva
         >
           {showAvatar ? (
             <Avatar
-              image="https://github.com/jfernandesdev.png"
+              image="a2fa96a67ec315d1d31b-1663158098820.jpg"
+              textFallback="Jeferson Fernandes"
               size="xs"
               borderWidth={1}
               borderColor="$white"
-              opacity={ative ? 1 : 0.45}
             />
           ): <Box />}
           <Box
