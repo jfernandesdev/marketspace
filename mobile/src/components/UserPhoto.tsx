@@ -7,8 +7,12 @@ import { PencilLine } from "lucide-react-native";
 import { Avatar } from "@components/Avatar";
 import UserPhotoDefault from "@assets/avatar-default.png";
 
-export function UserPhoto() {
-  const [userPhoto, setUserPhoto] = useState<ImagePicker.ImagePickerAsset | null>(null);
+interface UserPhotoProps {
+  setUserPhoto: (photo: ImagePicker.ImagePickerAsset | null) => void;
+}
+
+export function UserPhoto({ setUserPhoto }: UserPhotoProps) {
+  const [userPhoto, setLocalUserPhoto] = useState<ImagePicker.ImagePickerAsset | null>(null);
   
   async function handlePickImage() {
     // Solicita permissão para acessar a galeria
@@ -27,23 +31,18 @@ export function UserPhoto() {
     });
 
     if (!result.canceled) {
-      console.log("image ==>", result);
-      setUserPhoto(result.assets[0]); 
+      const selectedPhoto = result.assets[0];
+      setLocalUserPhoto(selectedPhoto); 
+      setUserPhoto(selectedPhoto); // estado do componente pai 
     }
   }
   
   return (
-    <View
-      alignSelf="center"
-      my="$6"
-      borderWidth={2}
-      borderColor="$brand400"
-      position="relative"
-      rounded="$full"
-    >
+    <View alignSelf="center" my="$6" rounded="$full">
       <Avatar
         image={userPhoto && userPhoto.uri ? userPhoto.uri : UserPhotoDefault}
         size="xl"
+        borderWidth={3}
         bg="$gray200"
         isPhotoDefault={!userPhoto}
       />

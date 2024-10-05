@@ -34,7 +34,7 @@ export function HeaderHome() {
 
         <VStack space="xs">
           <Text fontSize="$md">Boas vindas,</Text>
-          <Text fontFamily="$heading" fontSize="$md">{getFirstName("Jeferson Fernandes")}!</Text>
+          <Text fontFamily="$heading" fontSize="$md">{getFirstName(user.name)}!</Text>
         </VStack>
       </HStack>
 
