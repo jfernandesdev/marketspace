@@ -14,10 +14,14 @@ import PaymentMethodsList, { PaymentMethod } from "@components/PaymentMethodsLis
 import WhatsappIcon from "@assets/whatsapp-logo.svg";
 
 import { formatPrice } from "@utils/formatPrice";
+import { useNavigation } from "@react-navigation/native";
+import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
 export function AdDetails() {
   const [expandedDescription, setExpandedDescription] = useState(false);
   const [isLongText, setIsLongText] = useState(false);
+
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   const toggleExpandDescription = () => {
     setExpandedDescription(!expandedDescription);
@@ -33,6 +37,10 @@ export function AdDetails() {
   };
 
   const paymentMethods: PaymentMethod[] = ["boleto", "pix", "dinheiro", "cartaoCredito", "depositoBancario"];
+
+  const handleGoBackEdit = () => {
+    navigation.goBack();
+  }
 
   return (
     <VStack flex={1} justifyContent="space-between" pb="$6">
@@ -130,6 +138,7 @@ export function AdDetails() {
             bgVariant="secondary"
             btnIcon={ArrowLeft} 
             w="48%"
+            onPress={handleGoBackEdit}
           />
           <Button 
             title="Publicar" 
