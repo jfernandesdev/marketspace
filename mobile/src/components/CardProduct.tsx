@@ -52,7 +52,27 @@ export function CardProduct({ thumbnail, condition, title, price, ative, showAva
 
   const handleSeeDetailsAd = () => {
     navigation.navigate("adStack", {
-      screen: "adDetails"
+      screen: "adDetails",
+      params: {
+        adData: {
+          id: "12345",
+          user_id: "12345",
+          accept_trade: false,
+          description: "Tênis esportivo tamanho 34",
+          images: [
+            {
+              name: "2993cd7f-b1ad-42c5-a458-b1d244394e9b.jpeg",
+              type: "image/jpeg",
+              uri: "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Fmarketspace-400b9d22-655d-4894-8d3e-dfae9f95f482/ImagePicker/2993cd7f-b1ad-42c5-a458-b1d244394e9b.jpeg",
+            },
+          ],
+          is_new: true,
+          name: "Tênis esportivo",
+          payment_methods: ["boleto"],
+          price: 100,
+          is_active: true
+        }
+      }
     });
   };
 

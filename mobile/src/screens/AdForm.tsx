@@ -4,6 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
+import { useAuth } from "@hooks/useAuth";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
 import { Label } from "@components/Label";
@@ -11,9 +12,9 @@ import { Input } from "@components/Input";
 import { Radio } from "@components/Radio";
 import { Button } from "@components/Button";
 import { ScreenHeader } from "@components/ScreenHeader";
-import { ImagePickerCard } from "@components/ImagePickerCard";
-import { PaymentMethodsCheckbox } from "@components/PaymentMethodsCheckbox";
 import { ToastMessage } from "@components/ToastMessage";
+import { ImageInfo, ImagePickerCard } from "@components/ImagePickerCard";
+import { PaymentMethodsCheckbox } from "@components/PaymentMethodsCheckbox";
 
 import {
   VStack,
@@ -42,11 +43,13 @@ const schema = yup.object({
 
 export function AdForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedImages, setSelectedImages] = useState<ImageInfo[]>([]);
   const [acceptTrade, setAcceptTrade] = useState(false);
   const [selectedCondition, setSelectedCondition] = useState<string>("novo");
   const [paymentMethods, setPaymentMethods] = useState<string[]>([]);
 
   const navigation = useNavigation<AppNavigatorRoutesProps>();
+  const { user } = useAuth();
   const toast = useToast();
   const route = useRoute();
 
@@ -63,6 +66,20 @@ export function AdForm() {
   const handleNext = (data: FormData) => {
     try {
       setIsLoading(true);
+      if (selectedImages.length === 0) {
+        return toast.show({
+          placement: "top",
+          render: ({ id }) => (
+            <ToastMessage
+              id={id}
+              action="error"
+              title="Pelo menos uma imagem deve ser selecionada!"
+              align="center"
+            />
+          )
+        });
+      }
+
       if (paymentMethods.length === 0) {
         return toast.show({
           placement: "top",
@@ -82,12 +99,19 @@ export function AdForm() {
         is_new: selectedCondition === "novo",
         accept_trade: acceptTrade,
         payment_methods: paymentMethods,
+        images: selectedImages, 
+        is_active: true,
+        user_id: user.id
       };
 
       console.log(formData);
 
       navigation.navigate("adStack", {
-        screen: "adDetails"
+        screen: "adDetails",
+        params: {
+          adData: formData,
+          isEditFlow: true
+        }
       });
 
     } catch (error) {
@@ -101,12 +125,11 @@ export function AdForm() {
     reset();
     setAcceptTrade(false);
     setSelectedCondition("novo");
-    // setPaymentMethods([]);
   }
 
   const handleCancel = () => {
     resetForm();
-    navigation.goBack();
+    navigation.navigate("home");
   }
   
   return (
@@ -120,7 +143,7 @@ export function AdForm() {
           <Text fontFamily="$body" fontSize="$sm" color="$gray500" pb="$2">
             Escolha até 3 imagens para mostrar o quanto o seu produto é incrível!
           </Text>
-          <ImagePickerCard />
+          <ImagePickerCard onImagesSelected={setSelectedImages} />
         </Box>
 
         {/* Sobre o produto */}

@@ -32,6 +32,7 @@ type FilterActionsheetProps = {
 export function FilterModalBottom({ isOpen, onClose }: FilterActionsheetProps) {
   const [selectedCondition, setSelectedCondition] = useState<string[]>(["novo"]);
   const [acceptTrade, setAcceptTrade] = useState(false);
+  const [paymentMethods, setPaymentMethods] = useState<string[]>([]);
 
   const handleConditionChange = (newValues: string[]) => {
     setSelectedCondition(newValues);
@@ -82,7 +83,7 @@ export function FilterModalBottom({ isOpen, onClose }: FilterActionsheetProps) {
               </HStack>
 
               <Label text="Meios de pagamento aceitos" />
-              <PaymentMethodsCheckbox />
+              <PaymentMethodsCheckbox onSelect={setPaymentMethods} />
             </VStack>
             
             <HStack space="md" pt="$10">

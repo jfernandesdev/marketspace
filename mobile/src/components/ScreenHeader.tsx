@@ -29,7 +29,7 @@ export function ScreenHeader({
   }
 
   const handleGoBack = () => {
-    navigation.goBack();
+    navigation.navigate("home");
   }
 
   return(

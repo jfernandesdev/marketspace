@@ -5,8 +5,18 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { Plus, X } from 'lucide-react-native';
 
-export function ImagePickerCard() {
-  const [images, setImages] = useState<(string | null)[]>([]); 
+export interface ImageInfo {
+  uri: string;
+  name: string;
+  type: string; //mimeType
+}
+
+interface ImagePickerCardProps {
+  onImagesSelected: (images: ImageInfo[]) => void;
+}
+
+export function ImagePickerCard({ onImagesSelected }: ImagePickerCardProps) {
+  const [images, setImages] = useState<ImageInfo[]>([]); 
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -17,8 +27,17 @@ export function ImagePickerCard() {
     });
 
     if (!result.canceled) {
-      setImages([...images, result.assets[0].uri]);
-      console.log('Imagem selecionada:', result.assets[0]);
+      const selectedImage = result.assets[0];
+      const imageInfo: ImageInfo = {
+        uri: selectedImage.uri,
+        name: (selectedImage.fileName || `photo-${selectedImage.assetId}`).replace(/\s+/g, '-'),
+        type: selectedImage.mimeType || 'image/jpeg'
+      };
+
+      const updatedImages = [...images, imageInfo];
+      setImages(updatedImages);
+      onImagesSelected(updatedImages);
+      console.log('Imagem selecionada:', imageInfo); // Envia as imagens para o componente pai
     }
   };
 
@@ -30,13 +49,13 @@ export function ImagePickerCard() {
 
   return (
     <HStack space="md">
-      {images.map((imageUri, index) => (
+      {images.map((image, index) => (
         <TouchableOpacity key={index} onPress={() => removeImage(index)}>
           <Center bg="$gray300" h={100} w={100} rounded="$md" position="relative">
-            {imageUri ? (
+            {image ? (
               <>
                 <Image
-                  source={{ uri: imageUri }}
+                  source={{ uri: image.uri }}
                   alt={`Imagem ${index + 1}`}
                   h="$full"
                   w="$full"

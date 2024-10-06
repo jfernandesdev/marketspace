@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { TouchableOpacity } from "react-native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { HStack, VStack, Text, Badge, BadgeText, Heading, ScrollView, Box, Icon } from "@gluestack-ui/themed";
 import { ArrowLeft, Power, Tag, Trash } from "lucide-react-native";
+
+import { AdStackRoutes, AppNavigatorRoutesProps } from "@routes/app.routes";
 
 import { Button } from "@components/Button";
 import { ScreenHeader } from "@components/ScreenHeader";
@@ -11,13 +14,14 @@ import { Avatar } from "@components/Avatar";
 import { Label } from "@components/Label";
 import PaymentMethodsList, { PaymentMethod } from "@components/PaymentMethodsList";
 
+import { formatPrice } from "@utils/formatPrice";
+
 import WhatsappIcon from "@assets/whatsapp-logo.svg";
 
-import { formatPrice } from "@utils/formatPrice";
-import { useNavigation } from "@react-navigation/native";
-import { AppNavigatorRoutesProps } from "@routes/app.routes";
-
 export function AdDetails() {
+  const route = useRoute<RouteProp<AdStackRoutes, 'adDetails'>>();
+  const { adData, isEditFlow } = route.params; 
+
   const [expandedDescription, setExpandedDescription] = useState(false);
   const [isLongText, setIsLongText] = useState(false);
 
@@ -44,17 +48,10 @@ export function AdDetails() {
 
   return (
     <VStack flex={1} justifyContent="space-between" pb="$6">
-      {/* <ScreenHeader showBackButton showEditButton /> */}
-      <PreviewHeader />
+      {isEditFlow ? <PreviewHeader /> : <ScreenHeader showBackButton showEditButton /> }
 
       <VStack flex={1}>
-        <ImageSlider images={
-          [
-            "https://images.unsplash.com/photo-1460353581641-37baddab0fa2",
-            "https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717",
-            "https://images.unsplash.com/photo-1529810313688-44ea1c2d81d3"
-          ]
-        }/>
+        <ImageSlider images={adData.images.map(image => image.uri)} />
 
         <ScrollView px="$8">
           <HStack alignItems="center" space="sm" py="$3">
@@ -67,14 +64,14 @@ export function AdDetails() {
           </HStack>
 
           <Badge size="sm" bg="$gray300" rounded="$full" w={50} justifyContent="center">
-            <BadgeText color="$gray600" fontSize="$2xs">USADO</BadgeText>
+            <BadgeText color="$gray600" fontSize="$2xs">{adData.is_new ? "NOVO" : "USADO"}</BadgeText>
           </Badge >
 
           <HStack alignItems="center"justifyContent="space-between" mt="$1" mb="$2">
-            <Heading fontFamily="$heading" fontSize="$xl" color="$gray700">Tênis Masculino</Heading>
+            <Heading fontFamily="$heading" fontSize="$xl" color="$gray700">{adData.name}</Heading>
             <Text fontFamily="$heading" fontSize="$xl" color="$brand400">
               <Text fontFamily="$heading" fontSize="$sm" color="$brand400">R$ </Text>
-              {formatPrice(120)}
+              {formatPrice(adData.price)}
             </Text>
           </HStack>
 
@@ -86,7 +83,7 @@ export function AdDetails() {
               fontSize="$sm"
               color="$gray600"
             >
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae, sequi tempora beatae dignissimos veniam sapiente in. 
+              {adData.description}
             </Text>
 
             {isLongText && (
@@ -100,7 +97,9 @@ export function AdDetails() {
 
           <HStack py="$2" space="md">
             <Label text="Aceita troca?" />
-            <Text fontFamily="$body" color="$gray600" fontSize="$sm">Sim</Text>
+            <Text fontFamily="$body" color="$gray600" fontSize="$sm">
+              {adData.accept_trade ? "Sim" : "Não"}
+            </Text>
           </HStack>
 
           <VStack mt="$2">
@@ -125,28 +124,32 @@ export function AdDetails() {
         /> */}
 
         {/* Opção anuncio terceiro */}
-        {/* <Button
+        {!isEditFlow && (
+        <Button
           title="Entrar em contato"
           bgVariant="primary" 
           btnIcon={WhatsappIcon}
-        /> */}
+        />
+        )}
 
-        {/* Opção fluxo cadastro ad */}
-        <HStack space="md">
-          <Button 
-            title="Voltar e editar" 
-            bgVariant="secondary"
-            btnIcon={ArrowLeft} 
-            w="48%"
-            onPress={handleGoBackEdit}
-          />
-          <Button 
-            title="Publicar" 
-            bgVariant="primary" 
-            btnIcon={Tag}
-            w="48%"
-          />
-        </HStack>
+        {/* Fluxo cadastro/edição ad */}
+        {isEditFlow && (
+          <HStack space="md">
+            <Button 
+              title="Voltar e editar" 
+              bgVariant="secondary"
+              btnIcon={ArrowLeft} 
+              w="48%"
+              onPress={handleGoBackEdit}
+            />
+            <Button 
+              title="Publicar" 
+              bgVariant="primary" 
+              btnIcon={Tag}
+              w="48%"
+            />
+          </HStack>
+        )}
       </VStack>
     </VStack>
   );

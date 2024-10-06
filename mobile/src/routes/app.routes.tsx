@@ -1,5 +1,6 @@
 import { createBottomTabNavigator, BottomTabNavigationProp, } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Tag, House } from "lucide-react-native";
 
 import { Platform } from "react-native";
 import { Icon } from "@gluestack-ui/themed";
@@ -12,8 +13,10 @@ import { MyAds } from "@screens/MyAds";
 import { AdDetails } from "@screens/AdDetails";
 import { AdForm } from "@screens/AdForm";
 
+import { ImageInfo } from "@components/ImagePickerCard";
+import { ProductDto } from "@dtos/ProductDto";
+
 import ExitIcon from "@assets/exit.svg";
-import { Tag, House } from "lucide-react-native";
 
 // Definindo as rotas do Tab Navigator
 type AppRoutes = {
@@ -26,9 +29,14 @@ type AppRoutes = {
   };
 }
 
+type AdData = ProductDto & {
+  payment_methods: string[];
+  images: ImageInfo[];
+};
+
 // Definindo as rotas do Stack Navigator
-type AdStackRoutes = {
-  adDetails: undefined;
+export type AdStackRoutes = {
+  adDetails: { adData: AdData, isEditFlow?: boolean };
   adForm: { type: "ADD" | "EDIT" };
 }
 
