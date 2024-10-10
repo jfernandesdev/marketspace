@@ -2,26 +2,26 @@ import React from 'react';
 import { ScanBarcode, ScanQrCode, CircleDollarSign, CreditCard, Landmark } from 'lucide-react-native'; 
 import { HStack, Icon, Text } from '@gluestack-ui/themed';
 
-export type PaymentMethod = 'boleto' | 'pix' | 'dinheiro' | 'cartaoCredito' | 'depositoBancario';
+export type EnumPaymentMethod = 'boleto' | 'pix' | 'cash' | 'card' | 'deposit';
 
 const PaymentIcons = {
   boleto: ScanBarcode,
   pix: ScanQrCode,
-  dinheiro: CircleDollarSign,
-  cartaoCredito: CreditCard,
-  depositoBancario: Landmark,
+  cash: CircleDollarSign,
+  card: CreditCard,
+  deposit: Landmark,
 };
 
 const PaymentLabels = {
   boleto: "Boleto",
   pix: "PIX",
-  dinheiro: "Dinheiro",
-  cartaoCredito: "Cartão de Crédito",
-  depositoBancario: "Depósito Bancário",
+  cash: "Dinheiro",
+  card: "Cartão de Crédito",
+  deposit: "Depósito Bancário",
 };
 
 interface PaymentMethodsListProps {
-  paymentMethods: PaymentMethod[];
+  paymentMethods: EnumPaymentMethod[];
 }
 
 const PaymentMethodsList = ({ paymentMethods }: PaymentMethodsListProps) => {

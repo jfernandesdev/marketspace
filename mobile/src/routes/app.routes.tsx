@@ -17,6 +17,7 @@ import { ImageInfo } from "@components/ImagePickerCard";
 import { ProductDto } from "@dtos/ProductDto";
 
 import ExitIcon from "@assets/exit.svg";
+import { EnumPaymentMethod } from "@components/PaymentMethodsList";
 
 // Definindo as rotas do Tab Navigator
 type AppRoutes = {
@@ -30,7 +31,7 @@ type AppRoutes = {
 }
 
 type AdData = ProductDto & {
-  payment_methods: string[];
+  payment_methods: EnumPaymentMethod[];
   images: ImageInfo[];
 };
 

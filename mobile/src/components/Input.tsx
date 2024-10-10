@@ -47,7 +47,6 @@ export function Input({
   };
 
   const handleOpenFilter = () => {
-    console.log("Open Filter");
     setShowFilterModal(true);
   };
 

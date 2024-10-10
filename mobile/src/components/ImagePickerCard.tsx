@@ -36,8 +36,7 @@ export function ImagePickerCard({ onImagesSelected }: ImagePickerCardProps) {
 
       const updatedImages = [...images, imageInfo];
       setImages(updatedImages);
-      onImagesSelected(updatedImages);
-      console.log('Imagem selecionada:', imageInfo); // Envia as imagens para o componente pai
+      onImagesSelected(updatedImages); // Envia as imagens para o componente pai
     }
   };
 

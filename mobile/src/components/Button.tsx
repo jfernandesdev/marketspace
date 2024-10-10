@@ -24,6 +24,7 @@ const textColorMap = {
 export function Button({ title, bgVariant = "primary", isLoading = false, btnIcon, ...rest }: ButtonProps) {
   const bgColor = backgroundMap[bgVariant];
   const textColor = textColorMap[bgVariant];
+  const buttonOpacity = rest.disabled ? 0.5 : 1;
 
   return (
     <GluestackButton
@@ -32,6 +33,7 @@ export function Button({ title, bgVariant = "primary", isLoading = false, btnIco
       rounded="$md"
       bg={bgColor}
       disabled={isLoading}
+      style={{ opacity: buttonOpacity }}
       {...rest}
     >
       {

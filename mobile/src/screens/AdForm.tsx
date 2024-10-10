@@ -15,6 +15,7 @@ import { ScreenHeader } from "@components/ScreenHeader";
 import { ToastMessage } from "@components/ToastMessage";
 import { ImageInfo, ImagePickerCard } from "@components/ImagePickerCard";
 import { PaymentMethodsCheckbox } from "@components/PaymentMethodsCheckbox";
+import { EnumPaymentMethod } from "@components/PaymentMethodsList";
 
 import {
   VStack,
@@ -46,7 +47,7 @@ export function AdForm() {
   const [selectedImages, setSelectedImages] = useState<ImageInfo[]>([]);
   const [acceptTrade, setAcceptTrade] = useState(false);
   const [selectedCondition, setSelectedCondition] = useState<string>("novo");
-  const [paymentMethods, setPaymentMethods] = useState<string[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<EnumPaymentMethod[]>([]);
 
   const navigation = useNavigation<AppNavigatorRoutesProps>();
   const { user } = useAuth();
@@ -103,8 +104,6 @@ export function AdForm() {
         is_active: true,
         user_id: user.id
       };
-
-      console.log(formData);
 
       navigation.navigate("adStack", {
         screen: "adDetails",
