@@ -49,14 +49,14 @@ export function AdDetails() {
   };
 
   const handleGoBackEdit = () => {
-    navigation.goBack();
+    navigation.navigate("adForm", { type: "ADD"});
   }
 
   const uploadImages = async (productId: string) => {
     const formData = new FormData();
     formData.append('product_id', productId);
     
-    for (const image of adData.images) {
+    for (const image of adData.product_images) {
       const file = {
         uri: image.uri,
         name: image.name,
@@ -87,7 +87,7 @@ export function AdDetails() {
         is_new: adData.is_new,
         price: adData.price,
         accept_trade: adData.accept_trade,
-        payment_methods: adData.payment_methods,
+        payment_methods: adData.payment_methods.map(method => method.key),
       });
 
       const productId = response.data.id;
@@ -132,7 +132,7 @@ export function AdDetails() {
       {isEditFlow ? <PreviewHeader /> : <ScreenHeader showBackButton showEditButton />}
 
       <VStack flex={1}>
-        <ImageSlider images={adData.images.map(image => image.uri)} />
+        <ImageSlider images={adData.product_images} />
 
         <ScrollView px="$8">
           {isEditFlow && user && (
@@ -158,7 +158,7 @@ export function AdDetails() {
             </Text>
           </HStack>
 
-          <Box mb="$2">
+          <Box mb="$1">
             <Text
               numberOfLines={expandedDescription ? 0 : 3}
               onTextLayout={handleTextLayout}
@@ -171,21 +171,21 @@ export function AdDetails() {
 
             {isLongText && (
               <TouchableOpacity onPress={toggleExpandDescription}>
-                <Text mt="$1" color="$brand500" fontSize="$sm" ml="auto">
+                <Text color="$brand500" fontSize="$sm">
                   {expandedDescription ? 'Mostrar menos' : 'Mostrar mais'}
                 </Text>
               </TouchableOpacity>
             )}
           </Box>
 
-          <HStack py="$2" space="md">
+          <HStack py="$1" space="md">
             <Label text="Aceita troca?" />
             <Text fontFamily="$body" color="$gray600" fontSize="$sm">
               {adData.accept_trade ? "Sim" : "Não"}
             </Text>
           </HStack>
 
-          <VStack mt="$2">
+          <VStack mt="$1">
             <Label text="Meios de pagamento:" />
             <PaymentMethodsList paymentMethods={adData.payment_methods} />
           </VStack>

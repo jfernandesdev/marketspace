@@ -2,7 +2,7 @@ import React from 'react';
 import { ScanBarcode, ScanQrCode, CircleDollarSign, CreditCard, Landmark } from 'lucide-react-native'; 
 import { HStack, Icon, Text } from '@gluestack-ui/themed';
 
-export type EnumPaymentMethod = 'boleto' | 'pix' | 'cash' | 'card' | 'deposit';
+import { PaymentMethodsDto } from '@dtos/PaymentMethods';
 
 const PaymentIcons = {
   boleto: ScanBarcode,
@@ -12,29 +12,25 @@ const PaymentIcons = {
   deposit: Landmark,
 };
 
-const PaymentLabels = {
-  boleto: "Boleto",
-  pix: "PIX",
-  cash: "Dinheiro",
-  card: "Cartão de Crédito",
-  deposit: "Depósito Bancário",
-};
-
 interface PaymentMethodsListProps {
-  paymentMethods: EnumPaymentMethod[];
+  paymentMethods: PaymentMethodsDto[];
 }
 
 const PaymentMethodsList = ({ paymentMethods }: PaymentMethodsListProps) => {
   return (
     <>
-      {paymentMethods.map((method) => (
-        <HStack key={method} mt="$2" space="md">
-          <Icon as={PaymentIcons[method]} />
-          <Text fontFamily="$body" color="$gray600" fontSize="$sm">
-            {PaymentLabels[method]}
-          </Text>
-        </HStack>
-      ))}
+      {paymentMethods.map((method) => {
+        const IconComponent = PaymentIcons[method.key as keyof typeof PaymentIcons];
+
+        return (
+          <HStack key={method.key} mt="$2" space="md">
+            {IconComponent && <Icon as={IconComponent} />}
+            <Text fontFamily="$body" color="$gray600" fontSize="$sm">
+              {method.name}
+            </Text>
+          </HStack>
+        );
+      })}
     </>
   );
 };

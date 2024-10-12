@@ -7,15 +7,17 @@ import * as yup from "yup";
 import { useAuth } from "@hooks/useAuth";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
+import { ProductImagesDto } from "@dtos/ProductImages";
+import { PaymentMethodsDto } from "@dtos/PaymentMethods";
+
 import { Label } from "@components/Label";
 import { Input } from "@components/Input";
 import { Radio } from "@components/Radio";
 import { Button } from "@components/Button";
 import { ScreenHeader } from "@components/ScreenHeader";
 import { ToastMessage } from "@components/ToastMessage";
-import { ImageInfo, ImagePickerCard } from "@components/ImagePickerCard";
+import { ImagePickerCard } from "@components/ImagePickerCard";
 import { PaymentMethodsCheckbox } from "@components/PaymentMethodsCheckbox";
-import { EnumPaymentMethod } from "@components/PaymentMethodsList";
 
 import {
   VStack,
@@ -44,10 +46,10 @@ const schema = yup.object({
 
 export function AdForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedImages, setSelectedImages] = useState<ImageInfo[]>([]);
+  const [selectedImages, setSelectedImages] = useState<ProductImagesDto[]>([]);
   const [acceptTrade, setAcceptTrade] = useState(false);
   const [selectedCondition, setSelectedCondition] = useState<string>("novo");
-  const [paymentMethods, setPaymentMethods] = useState<EnumPaymentMethod[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodsDto[]>([]);
 
   const navigation = useNavigation<AppNavigatorRoutesProps>();
   const { user } = useAuth();
@@ -100,7 +102,7 @@ export function AdForm() {
         is_new: selectedCondition === "novo",
         accept_trade: acceptTrade,
         payment_methods: paymentMethods,
-        images: selectedImages, 
+        product_images: selectedImages, 
         is_active: true,
         user_id: user.id
       };

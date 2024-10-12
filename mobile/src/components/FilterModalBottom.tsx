@@ -23,6 +23,7 @@ import {
   ActionsheetDragIndicator,
   ActionsheetDragIndicatorWrapper
 } from "@gluestack-ui/themed";
+import { PaymentMethodsDto } from "@dtos/PaymentMethods";
 
 type FilterActionsheetProps = {
   isOpen: boolean;
@@ -32,7 +33,7 @@ type FilterActionsheetProps = {
 export function FilterModalBottom({ isOpen, onClose }: FilterActionsheetProps) {
   const [selectedCondition, setSelectedCondition] = useState<string[]>(["novo"]);
   const [acceptTrade, setAcceptTrade] = useState(false);
-  const [paymentMethods, setPaymentMethods] = useState<string[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodsDto[]>([]);
 
   const handleConditionChange = (newValues: string[]) => {
     setSelectedCondition(newValues);

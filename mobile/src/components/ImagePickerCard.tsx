@@ -5,7 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { Plus, X } from 'lucide-react-native';
 
-export interface ImageInfo {
+interface ImageInfo {
   uri: string;
   name: string;
   type: string; //mimeType

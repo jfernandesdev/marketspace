@@ -3,3 +3,7 @@ dist
 
 src/database/database.db
 .env
+
+tmp/uploads/*.png
+tmp/uploads/*.jpg
+tmp/uploads/*.jpeg

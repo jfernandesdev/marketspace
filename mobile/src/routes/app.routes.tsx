@@ -13,11 +13,9 @@ import { MyAds } from "@screens/MyAds";
 import { AdDetails } from "@screens/AdDetails";
 import { AdForm } from "@screens/AdForm";
 
-import { ImageInfo } from "@components/ImagePickerCard";
 import { ProductDto } from "@dtos/ProductDto";
 
 import ExitIcon from "@assets/exit.svg";
-import { EnumPaymentMethod } from "@components/PaymentMethodsList";
 
 // Definindo as rotas do Tab Navigator
 type AppRoutes = {
@@ -30,14 +28,12 @@ type AppRoutes = {
   };
 }
 
-type AdData = ProductDto & {
-  payment_methods: EnumPaymentMethod[];
-  images: ImageInfo[];
-};
-
 // Definindo as rotas do Stack Navigator
 export type AdStackRoutes = {
-  adDetails: { adData: AdData, isEditFlow?: boolean };
+  adDetails: { 
+    adData: ProductDto,
+    isEditFlow?: boolean 
+};
   adForm: { type: "ADD" | "EDIT" };
 }
 
