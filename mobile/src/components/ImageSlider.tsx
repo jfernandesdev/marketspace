@@ -23,7 +23,7 @@ export function ImageSlider({ images, isActive = true }: ImageSliderProps) {
   };
 
   return (
-    <Box h={280} w="$full">
+    <Box h={260} w="$full">
       <ScrollView
         horizontal
         pagingEnabled
@@ -40,7 +40,7 @@ export function ImageSlider({ images, isActive = true }: ImageSliderProps) {
               alt="Imagem Produto"
               source={{ uri: imageUrl }}
               resizeMode="cover"
-              h={280}
+              h={260}
               style={{ width }}
             />
           );

@@ -47,8 +47,14 @@ const DisabledOverlay = () => (
 export function CardProduct({ product }: CardProductProps) {
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
-  const handleSeeDetailsAd = () => {
-    navigation.navigate("adStack", { screen: "adDetails", params: { adData: product } });
+  const handleSeeDetailsAd = async (productId: string) => {
+    try {
+      const response = await api.get(`/products/${productId}`);
+      const product = response.data; 
+      navigation.navigate("adStack", { screen: "adDetails", params: { adData: product } });
+    } catch (error) {
+      console.error("Erro ao buscar os detalhes do produto:", error);
+    }
   };
 
   const getConditionColor = () => (product.is_new ? "$brand500" : "$black");
@@ -63,7 +69,7 @@ export function CardProduct({ product }: CardProductProps) {
     : null;
 
   return (
-    <TouchableOpacity onPress={handleSeeDetailsAd}>
+    <TouchableOpacity onPress={() => product && product.id && handleSeeDetailsAd(product.id)}>
       <Box position="relative" mb="$1" w={165}>
 
         <HStack

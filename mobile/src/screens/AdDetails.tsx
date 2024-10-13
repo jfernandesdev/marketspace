@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, Linking } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { HStack, VStack, Text, Badge, BadgeText, Heading, ScrollView, Box, Icon, useToast } from "@gluestack-ui/themed";
 import { ArrowLeft, Power, Tag, Trash } from "lucide-react-native";
@@ -49,23 +49,23 @@ export function AdDetails() {
   };
 
   const handleGoBackEdit = () => {
-    navigation.navigate("adForm", { type: "ADD"});
+    navigation.navigate("adForm", { type: "ADD" });
   }
 
   const uploadImages = async (productId: string) => {
     const formData = new FormData();
     formData.append('product_id', productId);
-    
+
     for (const image of adData.product_images) {
       const file = {
         uri: image.uri,
         name: image.name,
         type: image.type,
       };
-      
+
       formData.append('images', file as any);
     }
-    
+
     try {
       await api.post(`/products/images`, formData, {
         headers: {
@@ -127,24 +127,57 @@ export function AdDetails() {
     }
   };
 
+  const handleContactSeller = () => {
+    if (!adData.user || !adData.user.tel) {
+      toast.show({
+        placement: "top",
+        render: ({ id }) => (
+          <ToastMessage
+            id={id}
+            action="error"
+            title="Número de telefone não disponível."
+            align="center"
+          />
+        ),
+      });
+      return;
+    }
+
+    const message = `Olá ${adData.user.name}, vi seu anúncio "${adData.name} - R$ ${formatPrice(adData.price)}" no Marketspace. Ainda está disponível?`;
+    const whatsappUrl = `https://wa.me/${adData.user.tel}?text=${encodeURIComponent(message)}`;
+
+    Linking.openURL(whatsappUrl).catch((error) => {
+      console.error("Erro ao abrir o WhatsApp:", error);
+      toast.show({
+        placement: "top",
+        render: ({ id }) => (
+          <ToastMessage
+            id={id}
+            action="error"
+            title="Erro ao tentar abrir o WhatsApp."
+            align="center"
+          />
+        ),
+      });
+    });
+  };
+
   return (
     <VStack flex={1} justifyContent="space-between" pb="$6">
-      {isEditFlow ? <PreviewHeader /> : <ScreenHeader showBackButton showEditButton />}
+      {isEditFlow ? <PreviewHeader /> : <ScreenHeader showBackButton showEditButton={user.id === adData.user_id} />}
 
       <VStack flex={1}>
         <ImageSlider images={adData.product_images} />
 
         <ScrollView px="$8">
-          {isEditFlow && user && (
-            <HStack alignItems="center" space="sm" py="$3">
-              <Avatar
-                image={`${api.defaults.baseURL}/images/${user?.avatar}`}
-                textFallback={user.name}
-                size="sm"
-              />
-              <Text>{user.name}</Text>
-            </HStack>
-          )}
+          <HStack alignItems="center" space="sm" py="$3">
+            <Avatar
+              image={`${api.defaults.baseURL}/images/${adData.user?.avatar || user.avatar}`}
+              textFallback={adData.user?.name || user.name}
+              size="sm"
+            />
+            <Text>{adData.user?.name || user.name}</Text>
+          </HStack>
 
           <Badge size="sm" bg="$gray300" rounded="$full" w={50} justifyContent="center">
             <BadgeText color="$gray600" fontSize="$2xs">{adData.is_new ? "NOVO" : "USADO"}</BadgeText>
@@ -194,24 +227,26 @@ export function AdDetails() {
       </VStack>
 
       <VStack px="$8" mt="$2">
-        {/* Opções meus anuncios */}
-        {/* <Button 
-          title="Desativar anúncio" 
-          bgVariant="dark"
-          btnIcon={Power} 
-        />
-        <Button 
-          title="Excluir anúncio" 
-          bgVariant="secondary" 
-          btnIcon={Trash}
-        /> */}
-
-        {/* Opção anuncio terceiro */}
-        {!isEditFlow && (
+        {user.id === adData.user_id ? (
+          <>
+            <Button
+              title="Desativar anúncio"
+              bgVariant="dark"
+              btnIcon={Power}
+            />
+            <Button
+              title="Excluir anúncio"
+              bgVariant="secondary"
+              btnIcon={Trash}
+              mt="$2"
+            />
+          </>
+        ) : (
           <Button
             title="Entrar em contato"
             bgVariant="primary"
             btnIcon={WhatsappIcon}
+            onPress={handleContactSeller}
           />
         )}
 
