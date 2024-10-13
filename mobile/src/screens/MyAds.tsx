@@ -16,23 +16,21 @@ export function MyAds() {
   const [myProducts, setMyProducts] = useState<ProductDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const fetchProducts = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.get('/users/products');
+
+      setMyProducts(response.data || []);
+    } catch (error) {
+      console.error("Erro ao buscar meus anúncios", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
-      const fetchProducts = async () => {
-        setIsLoading(true);
-        try {
-          const response = await api.get('/users/products');
-
-          if (response && response.data.length > 0) {
-            setMyProducts(response.data);
-          }
-        } catch (error) {
-          console.error("Erro ao buscar meus anúncios", error);
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
       fetchProducts();
     }, [])
   );

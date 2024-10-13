@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { TouchableOpacity, Linking } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import { HStack, VStack, Text, Badge, BadgeText, Heading, ScrollView, Box, Icon, useToast } from "@gluestack-ui/themed";
 import { ArrowLeft, Power, Tag, Trash } from "lucide-react-native";
 
+import { useAuth } from "@hooks/useAuth";
 import { api } from '@services/api';
 
 import { AdStackRoutes, AppNavigatorRoutesProps } from "@routes/app.routes";
@@ -20,16 +20,31 @@ import { ToastMessage } from "@components/ToastMessage";
 import { formatPrice } from "@utils/formatPrice";
 
 import WhatsappIcon from "@assets/whatsapp-logo.svg";
-import { useAuth } from "@hooks/useAuth";
 
+import { 
+  HStack, 
+  VStack, 
+  Text, 
+  Badge, 
+  BadgeText, 
+  Heading, 
+  ScrollView, 
+  Box, 
+  Icon, 
+  Modal, 
+  useToast, 
+  ModalBackdrop 
+} from "@gluestack-ui/themed";
 
 export function AdDetails() {
   const route = useRoute<RouteProp<AdStackRoutes, 'adDetails'>>();
-  const { adData, isEditFlow } = route.params;
+  let { adData, isEditFlow } = route.params;
 
   const [expandedDescription, setExpandedDescription] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isActive, setIsActive] = useState(adData.is_active);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isExcluding, setIsExcluding] = useState(false);
   const [isLongText, setIsLongText] = useState(false);
 
   const navigation = useNavigation<AppNavigatorRoutesProps>();
@@ -166,7 +181,7 @@ export function AdDetails() {
   const toggleAdStatus = async () => {
     try {
       setIsSubmitting(true);
-      const newStatus = !adData.is_active;
+      const newStatus = !isActive;
       await api.patch(`/products/${adData.id}`, { is_active: newStatus });
       
       setIsActive(newStatus);
@@ -197,6 +212,43 @@ export function AdDetails() {
       });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteAd = async () => {
+    setIsExcluding(true);
+    try {
+      await api.delete(`/products/${adData.id}`);
+      toast.show({
+        placement: "top",
+        render: ({ id }) => (
+          <ToastMessage
+            id={id}
+            action="success"
+            title="Anúncio excluído com sucesso!"
+            align="center"
+          />
+        )
+      });
+
+      navigation.navigate("myAds");
+
+    } catch (error) {
+      console.error("Erro ao excluir o anúncio:", error);
+      toast.show({
+        placement: "top",
+        render: ({ id }) => (
+          <ToastMessage
+            id={id}
+            action="error"
+            title="Erro ao excluir o anúncio."
+            align="center"
+          />
+        )
+      });
+    } finally {
+      setIsExcluding(false);
+      setShowDeleteModal(false);
     }
   };
 
@@ -269,29 +321,33 @@ export function AdDetails() {
       </VStack>
 
       <VStack px="$8" mt="$2">
-        {user.id === adData.user_id ? (
-          <>
+        {!isEditFlow && (
+          user.id === adData.user_id ? (
+            <>
+              <Button
+                title={isActive ? "Desativar anúncio" : "Reativar anúncio"}
+                bgVariant={isActive ? "dark" : "primary"}
+                btnIcon={Power}
+                onPress={toggleAdStatus}
+                isLoading={isSubmitting}
+              />
+              <Button
+                title="Excluir anúncio"
+                bgVariant="secondary"
+                btnIcon={Trash}
+                mt="$2"
+                onPress={() => setShowDeleteModal(true)}
+                disabled={isSubmitting}
+              />
+            </>
+          ) : (
             <Button
-              title={adData.is_active ? "Desativar anúncio" : "Reativar anúncio"}
-              bgVariant={adData.is_active ? "dark" : "primary"}
-              btnIcon={Power}
-              onPress={toggleAdStatus}
-              isLoading={isSubmitting}
+              title="Entrar em contato"
+              bgVariant="primary"
+              btnIcon={WhatsappIcon}
+              onPress={handleContactSeller}
             />
-            <Button
-              title="Excluir anúncio"
-              bgVariant="secondary"
-              btnIcon={Trash}
-              mt="$2"
-            />
-          </>
-        ) : (
-          <Button
-            title="Entrar em contato"
-            bgVariant="primary"
-            btnIcon={WhatsappIcon}
-            onPress={handleContactSeller}
-          />
+          )
         )}
 
         {/* Fluxo cadastro/edição ad */}
@@ -316,6 +372,36 @@ export function AdDetails() {
           </HStack>
         )}
       </VStack>
+
+      <Modal 
+        isOpen={showDeleteModal} 
+        onClose={() => setShowDeleteModal(false)}
+      >
+        <ModalBackdrop />
+        <Modal.Content p="$2">
+          <Heading py="$2" textAlign="center">Confirmação</Heading>
+          <Modal.Body px="$0" mb="$3">
+            <Text textAlign="center">Você está prestes a excluir este anúncio. Esta decisão não poderá ser desfeita. Deseja continuar?</Text>
+          </Modal.Body>
+          <HStack py="$2" justifyContent="space-between">
+            <Button 
+              title="Cancelar"
+              bgVariant="secondary"
+              w="48%"
+              onPress={() => setShowDeleteModal(false)}
+              disabled={isExcluding}
+            />
+            <Button 
+              title="Sim, excluir"
+              bgVariant="dark"
+              w="48%"
+              btnIcon={Trash}
+              onPress={handleDeleteAd} 
+              isLoading={isExcluding}
+            />
+          </HStack>
+        </Modal.Content>
+      </Modal>
     </VStack>
   );
 }
