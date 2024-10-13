@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TouchableOpacity, Linking } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { HStack, VStack, Text, Badge, BadgeText, Heading, ScrollView, Box, Icon, useToast } from "@gluestack-ui/themed";
@@ -28,6 +28,7 @@ export function AdDetails() {
   const { adData, isEditFlow } = route.params;
 
   const [expandedDescription, setExpandedDescription] = useState(false);
+  const [isActive, setIsActive] = useState(adData.is_active);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLongText, setIsLongText] = useState(false);
 
@@ -162,12 +163,53 @@ export function AdDetails() {
     });
   };
 
+  const toggleAdStatus = async () => {
+    try {
+      setIsSubmitting(true);
+      const newStatus = !adData.is_active;
+      await api.patch(`/products/${adData.id}`, { is_active: newStatus });
+      
+      setIsActive(newStatus);
+
+      toast.show({
+        placement: "top",
+        render: ({ id }) => (
+          <ToastMessage
+            id={id}
+            action="success"
+            title={`Anúncio ${newStatus ? "ativado" : "desativado"} com sucesso!`}
+            align="center"
+          />
+        )
+      });
+    } catch (error) {
+      console.error("Erro ao atualizar o status do anúncio:", error);
+      toast.show({
+        placement: "top",
+        render: ({ id }) => (
+          <ToastMessage
+            id={id}
+            action="error"
+            title="Erro ao atualizar o status do anúncio."
+            align="center"
+          />
+        )
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  useEffect(() => {
+    setIsActive(adData.is_active);
+  }, [adData]);
+
   return (
     <VStack flex={1} justifyContent="space-between" pb="$6">
       {isEditFlow ? <PreviewHeader /> : <ScreenHeader showBackButton showEditButton={user.id === adData.user_id} />}
 
       <VStack flex={1}>
-        <ImageSlider images={adData.product_images} />
+        <ImageSlider images={adData.product_images} isActive={isActive} />
 
         <ScrollView px="$8">
           <HStack alignItems="center" space="sm" py="$3">
@@ -230,9 +272,11 @@ export function AdDetails() {
         {user.id === adData.user_id ? (
           <>
             <Button
-              title="Desativar anúncio"
-              bgVariant="dark"
+              title={adData.is_active ? "Desativar anúncio" : "Reativar anúncio"}
+              bgVariant={adData.is_active ? "dark" : "primary"}
               btnIcon={Power}
+              onPress={toggleAdStatus}
+              isLoading={isSubmitting}
             />
             <Button
               title="Excluir anúncio"
