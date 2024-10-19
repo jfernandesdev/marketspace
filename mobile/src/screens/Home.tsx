@@ -18,14 +18,18 @@ export function Home() {
   const [activeProductsCount, setActiveProductsCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
   // Função para buscar os produtos
   const fetchProducts = async () => {
+    setIsLoading(true);
     try {
-      const response = await api.get('/products');
-      
-      if (response && response.data.length > 0) {
-        setProducts(response.data);
-      }
+      const params: any = {
+        query: searchQuery, // Termo de busca
+      };
+
+      const response = await api.get('/products', { params });
+      setProducts(response.data);
     } catch (error) {
       console.error("Erro ao buscar produtos", error);
     } finally {
@@ -48,7 +52,7 @@ export function Home() {
       setIsLoading(true);
       fetchProducts();
       fetchActiveProductsCount();
-    }, [])
+    }, [searchQuery])
   );
 
   return (
@@ -66,6 +70,7 @@ export function Home() {
           returnKeyType="search"
           showIconSearch
           showIconFilter
+          onSearch={setSearchQuery}
         />
       </VStack>
 

@@ -1,4 +1,4 @@
-import { useState, useRef, ComponentProps } from "react";
+import { useState, ComponentProps } from "react";
 import { TouchableOpacity } from "react-native";
 
 import { Eye, EyeOff, SlidersVertical, Search } from "lucide-react-native";
@@ -23,6 +23,7 @@ type InputProps = ComponentProps<typeof InputField> & {
   isPasswordField?: boolean;
   showIconSearch?: boolean;
   showIconFilter?: boolean;
+  onSearch?: (term: string) => void;
 }
 
 export function Input({
@@ -32,17 +33,18 @@ export function Input({
   isPasswordField = false,
   showIconSearch = false,
   showIconFilter = false,
+  onSearch,
   ...rest
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(isPasswordField);
   const [showFilterModal, setShowFilterModal] = useState(false);
-  const inputRef = useRef<any>(null);
-
+  const [inputValue, setInputValue] = useState("");
+  
   const invalid = !!errorMessage || isInvalid;
 
-  const handleSearchFocus = () => {
-    if (inputRef.current) {
-      inputRef.current.focus();
+  const handleSearchSubmit = () => {
+    if (onSearch) {
+      onSearch(inputValue.trim());
     }
   };
 
@@ -69,20 +71,22 @@ export function Input({
         opacity={isReadOnly ? 0.5 : 1}
       >
         <InputField
-          ref={inputRef}
+          value={inputValue}
+          onChangeText={setInputValue}
           bg="$gray100"
           px="$4"
           color="$gray700"
           fontFamily="$body"
           placeholderTextColor="$gray400"
           secureTextEntry={showPassword}
+          onSubmitEditing={handleSearchSubmit}
           {...rest}
         />
 
         <HStack alignItems="center" position="absolute" right="$4" top="$0" bottom="$0">
           {/* Ícone de busca */}
           {showIconSearch && (
-            <TouchableOpacity onPress={handleSearchFocus}>
+            <TouchableOpacity onPress={handleSearchSubmit}>
               <Icon as={Search} size="xl" color="$gray600" />
             </TouchableOpacity>
           )}
