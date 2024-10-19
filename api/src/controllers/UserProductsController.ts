@@ -28,4 +28,17 @@ export class UserProductsController {
 
     return response.json(products);
   }
+
+  async activeQuantity(request: Request, response: Response) {
+    const userId = request.user.id;
+
+    const activeProductsCount = await prisma.products.count({
+      where: {
+        user_id: userId,
+        is_active: true
+      }
+    });
+
+    return response.json({ activeProductsCount });
+  }
 }

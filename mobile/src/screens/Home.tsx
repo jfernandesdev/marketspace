@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { FlatList } from "react-native";
 import { Text, VStack } from "@gluestack-ui/themed";
 
@@ -14,26 +15,41 @@ import { Loading } from "@components/Loading";
 
 export function Home() {
   const [products, setProducts] = useState<ProductDto[]>([]);
+  const [activeProductsCount, setActiveProductsCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const response = await api.get('/products');
-        console.log(response.data);
-
-        if(response && response.data.length > 0) {
-          setProducts(response.data);
-        }
-      } catch (error) {
-        console.error("Erro ao buscar produtos", error);
-      } finally {
-        setIsLoading(false);
+  // Função para buscar os produtos
+  const fetchProducts = async () => {
+    try {
+      const response = await api.get('/products');
+      
+      if (response && response.data.length > 0) {
+        setProducts(response.data);
       }
+    } catch (error) {
+      console.error("Erro ao buscar produtos", error);
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    fetchProducts();
-  }, []);
+  // Função para buscar a quantidade de anúncios ativos do usuário logado
+  const fetchActiveProductsCount = async () => {
+    try {
+      const response = await api.get('users/products/active/count');
+      setActiveProductsCount(response.data.activeProductsCount);
+    } catch (error) {
+      console.error("Erro ao buscar a quantidade de produtos ativos", error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      setIsLoading(true);
+      fetchProducts();
+      fetchActiveProductsCount();
+    }, [])
+  );
 
   return (
     <VStack flex={1} bg="$gray200" pt="$16" px="$6">
@@ -41,7 +57,7 @@ export function Home() {
 
       <VStack space="md" mt="$8">
         <Text fontFamily="$body" fontSize="$sm" color="$gray500">Seus produtos anunciados para troca/venda</Text>
-        <QuantityAdsWrapper />
+        <QuantityAdsWrapper activeCount={activeProductsCount} />
 
         <Text fontFamily="$body" fontSize="$sm" color="$gray500">Compre produtos variados</Text>
 

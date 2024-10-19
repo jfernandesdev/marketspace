@@ -7,7 +7,11 @@ import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
 import { ArrowRight, Tag } from "lucide-react-native";
 
-export function QuantityAdsWrapper() {
+interface QuantityAdsWrapperProps {
+  activeCount: number;
+}
+
+export function QuantityAdsWrapper({ activeCount }: QuantityAdsWrapperProps) {
   const navigation = useNavigation<AppNavigatorRoutesProps>();
 
   const goToMyAds = () => {
@@ -20,7 +24,7 @@ export function QuantityAdsWrapper() {
         <HStack space="md" alignItems="center">
           <Icon as={Tag} color="$brand500" size="xl" />
           <VStack>
-            <Text fontFamily="$heading" fontSize="$xl" color="$gray600">4</Text>
+            <Text fontFamily="$heading" fontSize="$xl" color="$gray600">{activeCount}</Text>
             <Text fontFamily="$body" fontSize="$xs" color="$gray600">anúncios ativos</Text>
           </VStack>
         </HStack>

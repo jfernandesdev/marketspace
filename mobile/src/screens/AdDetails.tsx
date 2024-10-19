@@ -97,14 +97,17 @@ export function AdDetails() {
   const publishAd = async () => {
     try {
       setIsSubmitting(true);
-      const response = await api.post('/products', {
+
+      const requestData = {
         name: adData.name,
         description: adData.description,
         is_new: adData.is_new,
         price: adData.price,
         accept_trade: adData.accept_trade,
         payment_methods: adData.payment_methods.map(method => method.key),
-      });
+      }
+
+      const response = await api.post('/products', requestData);
 
       const productId = response.data.id;
 

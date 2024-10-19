@@ -25,7 +25,7 @@ CREATE TABLE "Products" (
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "is_new" BOOLEAN NOT NULL,
-    "price" INTEGER NOT NULL,
+    "price" REAL NOT NULL,
     "accept_trade" BOOLEAN NOT NULL,
     "user_id" TEXT NOT NULL,
     "is_active" BOOLEAN NOT NULL DEFAULT true,
