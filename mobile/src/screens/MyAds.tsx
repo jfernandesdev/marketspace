@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { FlatList } from "react-native";
 import { useFocusEffect } from '@react-navigation/native';
 import { VStack, HStack, Text } from "@gluestack-ui/themed";
@@ -12,21 +12,40 @@ import { CardProduct } from "@components/CardProduct";
 import { Select } from "@components/Select";
 import { Loading } from "@components/Loading";
 
+type ProductStatus = 'todos' | 'ativo' | 'inativo';
+
 export function MyAds() {
   const [myProducts, setMyProducts] = useState<ProductDto[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<ProductDto[]>([]);
+
+  const [filterStatus, setFilterStatus] = useState<ProductStatus>('todos');
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchProducts = async () => {
     setIsLoading(true);
     try {
       const response = await api.get('/users/products');
+      const products = response.data || [];
 
-      setMyProducts(response.data || []);
+      setMyProducts(products);
+      filterProducts(products, filterStatus);
     } catch (error) {
       console.error("Erro ao buscar meus anúncios", error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const filterProducts = (products: ProductDto[], status: ProductStatus) => {
+    const filtered = status === 'todos'
+      ? products
+      : products.filter(product => product.is_active === (status === 'ativo'));
+
+    setFilteredProducts(filtered);
+  };
+
+  const formatProductCountText = (count: number) => {
+    return `${count} anúncio${count > 1 ? 's' : ''}`;
   };
 
   useFocusEffect(
@@ -35,12 +54,16 @@ export function MyAds() {
     }, [])
   );
 
+  useEffect(() => {
+    filterProducts(myProducts, filterStatus);
+  }, [filterStatus, myProducts]); 
+
   return (
     <VStack flex={1} >
       <ScreenHeader title="Meus anúncios" showAddButton />
 
       <HStack justifyContent="space-between" alignItems="center" mb="$6" zIndex={1} py="$2" px="$6">
-        <Text>{myProducts.length} anúncios</Text>
+        <Text>{formatProductCountText(filteredProducts.length)}</Text>
 
         <Select
           options={[
@@ -49,14 +72,18 @@ export function MyAds() {
             { label: "Inativos", value: "inativo" }
           ]}
           initialValue="todos"
-          onValueChange={(value) => console.log('Valor selecionado:', value)}
+          onValueChange={(value) => {
+            const status = value as ProductStatus;
+            setFilterStatus(status);
+            filterProducts(myProducts, status);
+          }}
         />
       </HStack>
       {isLoading ? <Loading /> : (
         <VStack px="$6">
           <FlatList
             showsVerticalScrollIndicator={false}
-            data={myProducts}
+            data={filteredProducts}
             renderItem={({ item }) => (
               <CardProduct product={item} />
             )}
