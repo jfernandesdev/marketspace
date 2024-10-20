@@ -54,7 +54,7 @@ export function ImagePickerCard({ onImagesSelected, selectedImages = []}: ImageP
       {images.map((image, index) => (
         <TouchableOpacity key={index} onPress={() => removeImage(index)}>
           <Center bg="$gray300" h={100} w={100} rounded="$md" position="relative">
-            {image ? (
+            {image.uri ? (
               <>
                 <Image
                   source={{ uri: image.uri }}

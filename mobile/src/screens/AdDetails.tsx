@@ -255,13 +255,26 @@ export function AdDetails() {
     }
   };
 
+  const handleEditPress = () => {
+    navigation.navigate("adStack", {
+      screen: "adForm",
+      params: { type: "EDIT", adData },
+    });
+  };
+
   useEffect(() => {
     setIsActive(adData.is_active);
   }, [adData]);
 
   return (
     <VStack flex={1} justifyContent="space-between" pb="$6">
-      {isEditFlow ? <PreviewHeader /> : <ScreenHeader showBackButton showEditButton={user.id === adData.user_id} />}
+      {isEditFlow 
+        ? <PreviewHeader /> 
+        : <ScreenHeader 
+            showBackButton 
+            showEditButton={user.id === adData.user_id} 
+          onEditPress={handleEditPress}
+          />}
 
       <VStack flex={1}>
         <ImageSlider images={adData.product_images} isActive={isActive} />

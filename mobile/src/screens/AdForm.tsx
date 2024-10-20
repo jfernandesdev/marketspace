@@ -1,8 +1,10 @@
-import { useState, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+
+import { api } from '@services/api';
 
 import { useAuth } from "@hooks/useAuth";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
@@ -46,6 +48,7 @@ const schema = yup.object({
 
 export function AdForm() {
   const [isLoading, setIsLoading] = useState(false);
+
   const [selectedImages, setSelectedImages] = useState<ProductImagesDto[]>([]);
   const [acceptTrade, setAcceptTrade] = useState(false);
   const [selectedCondition, setSelectedCondition] = useState<string>("new");
@@ -56,7 +59,7 @@ export function AdForm() {
   const toast = useToast();
   const route = useRoute();
 
-  const { type } = route.params as { type: "ADD" | "EDIT" };
+  const { type, adData } = route.params as { type: "ADD" | "EDIT"; adData?: any };
 
   const { control, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
     resolver: yupResolver(schema),
@@ -134,6 +137,70 @@ export function AdForm() {
     resetForm();
     navigation.navigate("home");
   }
+
+  const handleUpdateAd = async (data: FormData) => {
+    try {
+      setIsLoading(true);
+
+      const requestData = {
+        ...data,
+        is_new: selectedCondition === "new",
+        accept_trade: acceptTrade,
+        payment_methods: paymentMethods.map(method => method.key),
+        is_active: true,
+      }
+
+      const response = await api.put(`/products/${adData.id}`, requestData);
+      toast.show({
+        placement: "top",
+        render: ({ id }) => (
+          <ToastMessage
+            id={id}
+            action="success"
+            title="Anúncio editado com sucesso!"
+            align="center"
+          />
+        )
+      });
+
+      navigation.navigate("myAds");
+    } catch (error) {
+      toast.show({
+        placement: "top",
+        render: ({ id }) => (
+          <ToastMessage
+            id={id}
+            action="error"
+            title="Erro ao tentar editar o anúncio."
+            align="center"
+          />
+        )
+      });
+      console.error("Erro ao atualizar o produto:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    if (type === "EDIT" && adData) {
+      reset({
+        name: adData.name,
+        description: adData.description,
+        price: adData.price,
+      });
+      setAcceptTrade(adData.accept_trade);
+      setSelectedCondition(adData.is_new ? "new" : "used");
+      setPaymentMethods(adData.payment_methods);
+
+      const formattedImages = adData.product_images.map((image: ProductImagesDto) => ({
+        uri: `${api.defaults.baseURL}/images/${image.path}`,
+        id: image.id,
+      }));
+
+      setSelectedImages(formattedImages); 
+    }
+  }, [type, adData, reset]);
 
   return (
     <VStack flex={1} justifyContent="space-between" pb="$4">
@@ -268,10 +335,10 @@ export function AdForm() {
           onPress={handleCancel}
         />
         <Button
-          title="Avançar"
+          title={type === 'EDIT' ? "Salvar edição" : "Avançar"}
           w="48%"
           bgVariant="dark"
-          onPress={handleSubmit(handleNext)}
+          onPress={type === 'EDIT' ? handleSubmit(handleUpdateAd) : handleSubmit(handleNext)}
           isLoading={isLoading}
         />
       </HStack>
