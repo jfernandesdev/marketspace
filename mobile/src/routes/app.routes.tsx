@@ -1,6 +1,6 @@
 import { createBottomTabNavigator, BottomTabNavigationProp, } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Tag, House } from "lucide-react-native";
+import { Tag, House, User } from "lucide-react-native";
 
 import { Platform } from "react-native";
 import { Icon } from "@gluestack-ui/themed";
@@ -16,11 +16,13 @@ import { AdForm } from "@screens/AdForm";
 import { ProductDto } from "@dtos/ProductDto";
 
 import ExitIcon from "@assets/exit.svg";
+import { Profile } from "@screens/Profile";
 
 // Definindo as rotas do Tab Navigator
 type AppRoutes = {
   home: undefined;
   myAds: undefined;
+  profile: undefined;
   signOut: undefined;
   adStack: {
     screen: keyof AdStackRoutes;
@@ -107,6 +109,14 @@ export function AppRoutes() {
         options={{
           tabBarButton: () => null, 
           tabBarStyle: { display: "none" } // Oculta a barra
+        }}
+      ></Tab.Screen>
+
+      <Tab.Screen
+        name="profile"
+        component={Profile}
+        options={{
+          tabBarIcon: ({ color }) => <Icon as={User} color={color} size="xl" />
         }}
       ></Tab.Screen>
 

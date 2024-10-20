@@ -10,7 +10,6 @@ import { ProductDto } from "@dtos/ProductDto";
 import { ScreenHeader } from "@components/ScreenHeader";
 import { CardProduct } from "@components/CardProduct";
 import { Select } from "@components/Select";
-import { Loading } from "@components/Loading";
 
 type ProductStatus = 'todos' | 'ativo' | 'inativo';
 
@@ -79,21 +78,20 @@ export function MyAds() {
           }}
         />
       </HStack>
-      {isLoading ? <Loading /> : (
-        <VStack px="$6">
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            data={filteredProducts}
-            renderItem={({ item }) => (
-              <CardProduct product={item} />
-            )}
-            keyExtractor={(item, index) => item.id ? item.id : `${item.name}-${index}`}
-            numColumns={2}
-            columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 16 }}
-            contentContainerStyle={{ paddingBottom: 150 }}
-          />
-        </VStack>
-      )}
+     
+      <VStack px="$6">
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={filteredProducts}
+          renderItem={({ item }) => (
+            <CardProduct product={item} />
+          )}
+          keyExtractor={(item, index) => item.id ? item.id : `${item.name}-${index}`}
+          numColumns={2}
+          columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 16 }}
+          contentContainerStyle={{ paddingBottom: 150 }}
+        />
+      </VStack>
     </VStack>
   )
 }
