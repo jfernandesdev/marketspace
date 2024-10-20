@@ -1,22 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Center, Icon, HStack, Image } from '@gluestack-ui/themed';
 import * as ImagePicker from 'expo-image-picker';
 
 import { Plus, X } from 'lucide-react-native';
-
-interface ImageInfo {
-  uri: string;
-  name: string;
-  type: string; //mimeType
-}
+import { ProductImagesDto } from '@dtos/ProductImages';
 
 interface ImagePickerCardProps {
-  onImagesSelected: (images: ImageInfo[]) => void;
+  onImagesSelected: (images: ProductImagesDto[]) => void;
+  selectedImages?: ProductImagesDto[];
 }
 
-export function ImagePickerCard({ onImagesSelected }: ImagePickerCardProps) {
-  const [images, setImages] = useState<ImageInfo[]>([]); 
+export function ImagePickerCard({ onImagesSelected, selectedImages = []}: ImagePickerCardProps) {
+  const [images, setImages] = useState<ProductImagesDto[]>([]); 
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -28,7 +24,7 @@ export function ImagePickerCard({ onImagesSelected }: ImagePickerCardProps) {
 
     if (!result.canceled) {
       const selectedImage = result.assets[0];
-      const imageInfo: ImageInfo = {
+      const imageInfo: ProductImagesDto = {
         uri: selectedImage.uri,
         name: (selectedImage.fileName || `photo-${selectedImage.assetId}`).replace(/\s+/g, '-'),
         type: selectedImage.mimeType || 'image/jpeg'
@@ -44,7 +40,14 @@ export function ImagePickerCard({ onImagesSelected }: ImagePickerCardProps) {
     const newImages = [...images];
     newImages.splice(index, 1);
     setImages(newImages);
+    onImagesSelected(newImages);
   };
+
+  useEffect(() => {
+    if (JSON.stringify(images) !== JSON.stringify(selectedImages)) {
+      setImages(selectedImages);
+    }
+  }, [selectedImages]);
 
   return (
     <HStack space="md">

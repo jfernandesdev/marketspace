@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { FlatList } from "react-native";
 import { Text, VStack } from "@gluestack-ui/themed";
@@ -12,22 +12,34 @@ import { QuantityAdsWrapper } from "@components/QuantityAdsWrapper";
 import { Input } from "@components/Input";
 import { CardProduct } from "@components/CardProduct";
 import { Loading } from "@components/Loading";
+import { PaymentMethodsDto } from "@dtos/PaymentMethods";
+import { FilterModalBottom, IFilterProps } from "@components/FilterModalBottom";
 
 export function Home() {
   const [products, setProducts] = useState<ProductDto[]>([]);
   const [activeProductsCount, setActiveProductsCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [showFilterModal, setShowFilterModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [filters, setFilters] = useState<IFilterProps>({
+    conditions: ['new', 'used'],
+    acceptTrade: false,
+    paymentMethods: []
+  });
 
   // Função para buscar os produtos
-  const fetchProducts = async () => {
+  const fetchProducts = async (params: any = {}) => {
     setIsLoading(true);
     try {
-      const params: any = {
-        query: searchQuery, // Termo de busca
-      };
+      if (searchQuery) {
+        params.query = searchQuery;
+      }
 
+      if (!params.conditions || params.conditions.length === 0) {
+        params.conditions = ['new', 'used'];
+      }
+      
       const response = await api.get('/products', { params });
       setProducts(response.data);
     } catch (error) {
@@ -47,12 +59,38 @@ export function Home() {
     }
   };
 
+  const handleOpenFilter = () => {
+    setShowFilterModal(true);
+  };
+
+  const handleApplyFilters = (newFilters: IFilterProps) => {
+    let params: any = {};
+
+    if (newFilters.conditions.length > 0) {
+      params.conditions = newFilters.conditions;
+    }
+
+    if (newFilters.acceptTrade) {
+      params.accept_trade = true;
+    }
+
+    if (newFilters.paymentMethods.length > 0) {
+      params.payment_methods = newFilters.paymentMethods.map(method => method.key);
+    }
+
+    setFilters(newFilters);
+    setShowFilterModal(false);
+    fetchProducts(params);
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, [searchQuery]);
+
   useFocusEffect(
     useCallback(() => {
-      setIsLoading(true);
-      fetchProducts();
       fetchActiveProductsCount();
-    }, [searchQuery])
+    }, [])
   );
 
   return (
@@ -71,6 +109,14 @@ export function Home() {
           showIconSearch
           showIconFilter
           onSearch={setSearchQuery}
+          onOpenFilter={handleOpenFilter}
+        />
+
+        <FilterModalBottom
+          isOpen={showFilterModal}
+          onClose={() => setShowFilterModal(false)}
+          onApplyFilters={handleApplyFilters}
+          filters={filters}
         />
       </VStack>
 

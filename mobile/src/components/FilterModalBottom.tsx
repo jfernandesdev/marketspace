@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Platform, TouchableOpacity } from "react-native";
 
 import { Button } from "@components/Button";
@@ -25,19 +25,43 @@ import {
 } from "@gluestack-ui/themed";
 import { PaymentMethodsDto } from "@dtos/PaymentMethods";
 
+export interface IFilterProps {
+  conditions: string[],
+  acceptTrade: boolean,
+  paymentMethods: PaymentMethodsDto[],
+}
+
 type FilterActionsheetProps = {
   isOpen: boolean;
   onClose: () => void;
+  onApplyFilters?: (filters: IFilterProps) => void;
+  filters?: IFilterProps;
 };
 
-export function FilterModalBottom({ isOpen, onClose }: FilterActionsheetProps) {
-  const [selectedCondition, setSelectedCondition] = useState<string[]>(["novo"]);
-  const [acceptTrade, setAcceptTrade] = useState(false);
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodsDto[]>([]);
+export function FilterModalBottom({ isOpen, onClose, onApplyFilters, filters }: FilterActionsheetProps) {
+  const [selectedCondition, setSelectedCondition] = useState<string[]>(filters?.conditions || []);
+  const [acceptTrade, setAcceptTrade] = useState(filters?.acceptTrade || false);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodsDto[]>(filters?.paymentMethods || []);
 
   const handleConditionChange = (newValues: string[]) => {
     setSelectedCondition(newValues);
-    console.log("Condições:", newValues);
+  };
+
+  const handleApplyFilters = () => {
+    if (onApplyFilters) {
+      onApplyFilters({
+        conditions: selectedCondition,
+        acceptTrade,
+        paymentMethods
+      });
+    }
+    onClose(); 
+  };
+
+  const handleResetFilters = () => {
+    setSelectedCondition([]); 
+    setAcceptTrade(false);
+    setPaymentMethods([]); 
   };
 
   return (
@@ -63,17 +87,17 @@ export function FilterModalBottom({ isOpen, onClose }: FilterActionsheetProps) {
                 <HStack space="lg" alignItems="center">
                   <Checkbox 
                     label="Novo" 
-                    value="novo" 
+                    value="new" 
                     aria-label="Novo" 
                     type="custom"
-                    isChecked={selectedCondition.includes("novo")}
+                    isChecked={selectedCondition.includes("new")}
                   />
                   <Checkbox 
                     label="Usado" 
-                    value="usado" 
+                    value="used" 
                     aria-label="Usado" 
                     type="custom"
-                    isChecked={selectedCondition.includes("usado")}
+                    isChecked={selectedCondition.includes("used")}
                   />
                 </HStack>
               </CheckboxGroup> 
@@ -84,7 +108,10 @@ export function FilterModalBottom({ isOpen, onClose }: FilterActionsheetProps) {
               </HStack>
 
               <Label text="Meios de pagamento aceitos" />
-              <PaymentMethodsCheckbox onSelect={setPaymentMethods} />
+              <PaymentMethodsCheckbox 
+                onSelect={setPaymentMethods} 
+                selectedMethods={paymentMethods}
+              />
             </VStack>
             
             <HStack space="md" pt="$10">
@@ -92,13 +119,13 @@ export function FilterModalBottom({ isOpen, onClose }: FilterActionsheetProps) {
                 title="Resetar filtros"
                 w="48%"
                 bgVariant="secondary"
-                onPress={onClose}
+                onPress={handleResetFilters}
               />
               <Button
                 title="Aplicar filtros"
                 w="48%"
                 bgVariant="dark"
-                onPress={onClose}
+                onPress={handleApplyFilters}
               />
             </HStack>
           </VStack>

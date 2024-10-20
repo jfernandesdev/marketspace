@@ -46,18 +46,31 @@ export class ProductsController {
   async index(request: Request, response: Response) {
     const userId = request.user.id
 
-    const is_new = request.query.is_new === undefined ? undefined : request.query.is_new === 'true'
-    const accept_trade = request.query.accept_trade === undefined ? undefined : request.query.accept_trade === 'true'
+    const conditions = Array.isArray(request.query.conditions)
+      ? request.query.conditions
+      : [request.query.conditions];
+
+    const accept_trade = request.query.accept_trade === undefined 
+      ? undefined 
+      : request.query.accept_trade === 'true'
+
     const query = typeof request.query.query === 'string' ? request.query.query : undefined
-    const payment_methods = request.query.payment_methods === undefined ? undefined : typeof request.query.payment_methods === 'string' ? new Array(request.query.payment_methods) : request.query.payment_methods as string[];
     
+    let payment_methods;
+    if (request.query.payment_methods === undefined) {
+      payment_methods = undefined;
+    } else if (typeof request.query.payment_methods === 'string') {
+      payment_methods = [request.query.payment_methods]; // Se for uma string, envolva em um array
+    } else {
+      payment_methods = request.query.payment_methods as string[]; // Se for um array, use-o diretamente
+    }
+
     const products = await prisma.products.findMany({
       where: {
         user_id: {
           not: userId
         },
         is_active: true,
-        is_new,
         accept_trade,
         payment_methods: {
           some: {
@@ -68,7 +81,15 @@ export class ProductsController {
         },
         name: {
           contains: query
-        }
+        }, 
+        OR: conditions.map(condition => {
+          if (condition === "new") {
+            return { is_new: true }; 
+          } else if (condition === "used") {
+            return { is_new: false };
+          }
+          return {}; 
+        }).filter(cond => Object.keys(cond).length > 0) 
       },
       select: {
         id: true,

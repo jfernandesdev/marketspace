@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -48,7 +48,7 @@ export function AdForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedImages, setSelectedImages] = useState<ProductImagesDto[]>([]);
   const [acceptTrade, setAcceptTrade] = useState(false);
-  const [selectedCondition, setSelectedCondition] = useState<string>("novo");
+  const [selectedCondition, setSelectedCondition] = useState<string>("new");
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodsDto[]>([]);
 
   const navigation = useNavigation<AppNavigatorRoutesProps>();
@@ -99,7 +99,7 @@ export function AdForm() {
 
       const formData = {
         ...data,
-        is_new: selectedCondition === "novo",
+        is_new: selectedCondition === "new",
         accept_trade: acceptTrade,
         payment_methods: paymentMethods,
         product_images: selectedImages, 
@@ -125,14 +125,16 @@ export function AdForm() {
   const resetForm = ()  => {
     reset();
     setAcceptTrade(false);
-    setSelectedCondition("novo");
+    setSelectedCondition("new");
+    setSelectedImages([]);
+    setPaymentMethods([]);
   }
 
   const handleCancel = () => {
     resetForm();
     navigation.navigate("home");
   }
-  
+
   return (
     <VStack flex={1} justifyContent="space-between" pb="$4">
       <ScreenHeader title={type === "EDIT" ? "Editar anúncio" : "Criar anúncio"} showBackButton />
@@ -144,7 +146,10 @@ export function AdForm() {
           <Text fontFamily="$body" fontSize="$sm" color="$gray500" pb="$2">
             Escolha até 3 imagens para mostrar o quanto o seu produto é incrível!
           </Text>
-          <ImagePickerCard onImagesSelected={setSelectedImages} />
+          <ImagePickerCard 
+            onImagesSelected={setSelectedImages}
+            selectedImages={selectedImages}
+          />
         </Box>
 
         {/* Sobre o produto */}
@@ -200,8 +205,8 @@ export function AdForm() {
 
           <RadioGroup value={selectedCondition} onChange={setSelectedCondition}>
             <HStack space="4xl" alignItems="center" pt="$2">
-              <Radio label="Produto novo" value="novo" aria-label="Novo" />
-              <Radio label="Produto usado" value="usado" aria-label="Usado" />
+              <Radio label="Produto novo" value="new" aria-label="Novo" />
+              <Radio label="Produto usado" value="used" aria-label="Usado" />
             </HStack>
           </RadioGroup>
         </Box>
@@ -248,7 +253,10 @@ export function AdForm() {
         {/* Meios de pagamento */}
         <Box mb="$4">
           <Label text="Meios de pagamento aceitos" fontSize="$md" />
-          <PaymentMethodsCheckbox onSelect={setPaymentMethods} />
+          <PaymentMethodsCheckbox 
+            onSelect={setPaymentMethods} 
+            selectedMethods={paymentMethods}
+          />
         </Box>
       </ScrollView>
 

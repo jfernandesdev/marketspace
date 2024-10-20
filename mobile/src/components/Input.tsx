@@ -14,7 +14,7 @@ import {
   HStack
 } from "@gluestack-ui/themed";
 
-import { FilterModalBottom } from "@components/FilterModalBottom";
+// import { FilterModalBottom } from "@components/FilterModalBottom";
 
 type InputProps = ComponentProps<typeof InputField> & {
   isReadOnly?: boolean;
@@ -24,6 +24,7 @@ type InputProps = ComponentProps<typeof InputField> & {
   showIconSearch?: boolean;
   showIconFilter?: boolean;
   onSearch?: (term: string) => void;
+  onOpenFilter?: () => void;
 }
 
 export function Input({
@@ -34,10 +35,10 @@ export function Input({
   showIconSearch = false,
   showIconFilter = false,
   onSearch,
+  onOpenFilter,
   ...rest
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(isPasswordField);
-  const [showFilterModal, setShowFilterModal] = useState(false);
   const [inputValue, setInputValue] = useState("");
   
   const invalid = !!errorMessage || isInvalid;
@@ -46,10 +47,6 @@ export function Input({
     if (onSearch) {
       onSearch(inputValue.trim());
     }
-  };
-
-  const handleOpenFilter = () => {
-    setShowFilterModal(true);
   };
 
   return (
@@ -96,7 +93,7 @@ export function Input({
 
           {/* Ícone de filtro */}
           {showIconFilter && (
-            <TouchableOpacity onPress={handleOpenFilter}>
+            <TouchableOpacity onPress={onOpenFilter}>
               <Icon as={SlidersVertical} size="xl" color="$gray600" />
             </TouchableOpacity>
           )}
@@ -120,9 +117,6 @@ export function Input({
           {errorMessage}
         </FormControlErrorText>
       </FormControlError>
-
-      <FilterModalBottom isOpen={showFilterModal} onClose={() => setShowFilterModal(false)} />
-
     </FormControl>
   );
 }
