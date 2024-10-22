@@ -12,7 +12,6 @@ import { QuantityAdsWrapper } from "@components/QuantityAdsWrapper";
 import { Input } from "@components/Input";
 import { CardProduct } from "@components/CardProduct";
 import { Loading } from "@components/Loading";
-import { PaymentMethodsDto } from "@dtos/PaymentMethods";
 import { FilterModalBottom, IFilterProps } from "@components/FilterModalBottom";
 
 export function Home() {
@@ -98,10 +97,10 @@ export function Home() {
       <HeaderHome />
 
       <VStack space="md" mt="$8">
-        <Text fontFamily="$body" fontSize="$sm" color="$gray500">Seus produtos anunciados para troca/venda</Text>
+        <Text fontFamily="$body" fontSize="$sm" color="$gray500">Seus produtos anunciados</Text>
         <QuantityAdsWrapper activeCount={activeProductsCount} />
 
-        <Text fontFamily="$body" fontSize="$sm" color="$gray500">Compre produtos variados</Text>
+        <Text fontFamily="$body" fontSize="$sm" color="$gray500">Compre ou troque produtos variados com facilidade</Text>
 
         <Input 
           placeholder="Buscar anúncio"

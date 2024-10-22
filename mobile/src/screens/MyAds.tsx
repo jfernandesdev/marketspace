@@ -59,7 +59,7 @@ export function MyAds() {
 
   return (
     <VStack flex={1} >
-      <ScreenHeader title="Meus anúncios" showAddButton />
+      <ScreenHeader title="Meus anúncios" />
 
       <HStack justifyContent="space-between" alignItems="center" mb="$6" zIndex={1} py="$2" px="$6">
         <Text>{formatProductCountText(filteredProducts.length)}</Text>

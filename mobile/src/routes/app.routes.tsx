@@ -1,8 +1,8 @@
 import { createBottomTabNavigator, BottomTabNavigationProp, } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Tag, House, User } from "lucide-react-native";
+import { Tag, House, User, Plus } from "lucide-react-native";
 
-import { Platform } from "react-native";
+import { Platform, TouchableOpacity } from "react-native";
 import { Icon } from "@gluestack-ui/themed";
 import { gluestackUIConfig } from "@gluestack-ui";
 
@@ -17,6 +17,8 @@ import { ProductDto } from "@dtos/ProductDto";
 
 import ExitIcon from "@assets/exit.svg";
 import { Profile } from "@screens/Profile";
+import { useNavigation } from "@react-navigation/native";
+import { Notifications } from "@screens/Notifications";
 
 // Definindo as rotas do Tab Navigator
 type AppRoutes = {
@@ -24,6 +26,7 @@ type AppRoutes = {
   myAds: undefined;
   profile: undefined;
   signOut: undefined;
+  notifications: undefined;
   adStack: {
     screen: keyof AdStackRoutes;
     params?: AdStackRoutes[keyof AdStackRoutes];
@@ -61,11 +64,21 @@ const AdStack = () => {
 export function AppRoutes() {
   const { tokens } = gluestackUIConfig;
   const iconSize = tokens.space["6"];
+  
   const { signOut } = useAuth();
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
+
 
   const handleSignOut = async () => {
     await signOut();
   }
+
+  const handleCreateAd = () => {
+    navigation.navigate("adStack", {
+      screen: "adForm",
+      params: { type: "ADD" }
+    });
+  };
 
   return (
     <Tab.Navigator
@@ -107,10 +120,28 @@ export function AppRoutes() {
         name="adStack"
         component={AdStack}
         options={{
-          tabBarButton: () => null, 
-          tabBarStyle: { display: "none" } // Oculta a barra
+          tabBarStyle: { display: "none" },
+          tabBarButton: () => (
+            <TouchableOpacity
+              onPress={handleCreateAd}
+              activeOpacity={1}
+              style={{
+                bottom: Platform.OS === "android" ? 45 : 50,
+                height: 55,
+                width: 55,
+                borderRadius: 30,
+                borderWidth: 5,
+                borderColor: tokens.colors.gray200,
+                backgroundColor: tokens.colors.gray600,
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+            >
+              <Plus color={tokens.colors.white} size={iconSize * 1} />
+            </TouchableOpacity>
+          ),
         }}
-      ></Tab.Screen>
+      />
 
       <Tab.Screen
         name="profile"
@@ -128,6 +159,17 @@ export function AppRoutes() {
             <ExitIcon fill={tokens.colors.red400} width={iconSize} height={iconSize} onPress={handleSignOut} />
         }}
       />
+
+     
+      <Tab.Screen
+        name="notifications"
+        component={Notifications}
+        options={{
+          tabBarButton: () => null, 
+          tabBarStyle: { display: "none" } // Oculta a barra
+        }}
+      ></Tab.Screen>
+
     </Tab.Navigator>
   );
 }

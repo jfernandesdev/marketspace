@@ -6,11 +6,10 @@ import { useAuth } from "@hooks/useAuth";
 import { api } from "@services/api";
 
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
-import { Button } from "@components/Button";
 import { Avatar } from "@components/Avatar";
 
-import { Plus } from "lucide-react-native";
 import { getFirstName } from "@utils/firstName";
+import { NotificationIcon } from "./NotificationIcon";
 
 export function HeaderHome() {
   const { user } = useAuth();
@@ -38,13 +37,7 @@ export function HeaderHome() {
         </VStack>
       </HStack>
 
-      <Button 
-        title="Criar anúncio" 
-        btnIcon={Plus}
-        bgVariant="dark"
-        onPress={handleCreateAd} 
-        w={139} 
-      />
+      <NotificationIcon notificationsCount={2} />
     </HStack>
   );
 }
