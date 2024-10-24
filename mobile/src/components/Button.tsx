@@ -7,6 +7,7 @@ type ButtonProps = ComponentProps<typeof GluestackButton> & {
   bgVariant?: "primary" | "secondary" | "dark";
   isLoading?: boolean;
   btnIcon?: React.ComponentType<LucideProps>;
+  btnIconRight?: React.ComponentType<LucideProps>;
 }
 
 const backgroundMap = {
@@ -21,7 +22,7 @@ const textColorMap = {
   dark: "$gray100",
 };
 
-export function Button({ title, bgVariant = "primary", isLoading = false, btnIcon, ...rest }: ButtonProps) {
+export function Button({ title, bgVariant = "primary", isLoading = false, btnIcon, btnIconRight, ...rest }: ButtonProps) {
   const bgColor = backgroundMap[bgVariant];
   const textColor = textColorMap[bgVariant];
   const buttonOpacity = rest.disabled ? 0.5 : 1;
@@ -42,6 +43,7 @@ export function Button({ title, bgVariant = "primary", isLoading = false, btnIco
           <HStack alignItems="center" space="xs">
             {btnIcon && <Icon as={btnIcon} size="xs" color={textColor} />}
             <Text fontFamily="$heading" fontSize="$sm" color={textColor}> {title}</Text>
+            {btnIconRight && <Icon as={btnIconRight} size="xs" color={textColor} />}
           </HStack>
         )
       }
