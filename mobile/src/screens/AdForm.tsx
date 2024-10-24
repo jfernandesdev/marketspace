@@ -141,7 +141,7 @@ export function AdForm() {
   const handleUpdateAd = async (data: FormData) => {
     try {
       setIsLoading(true);
-
+      
       const requestData = {
         ...data,
         is_new: selectedCondition === "new",
@@ -150,7 +150,40 @@ export function AdForm() {
         is_active: true,
       }
 
-      const response = await api.put(`/products/${adData.id}`, requestData);
+      await api.put(`/products/${adData.id}`, requestData);
+
+      // Encontrar imagens removidas (existentes antes mas não mais na lista)
+      const removedImages = adData.product_images
+        .filter((image: ProductImagesDto) => 
+          !selectedImages.some((img: ProductImagesDto) => img.id === image.id))
+        .map((image: ProductImagesDto) => image.id);
+
+      if (removedImages.length > 0) {
+        await api.delete(`/products/images`, {
+          data: { productImagesIds: removedImages },
+        });
+      }
+
+      // Fazer upload de novas imagens (aquelas sem ID)
+      const newImages = selectedImages.filter(image => !image.id);
+
+      if (newImages.length > 0) {
+        const formData = new FormData();
+        formData.append("product_id", adData.id);
+
+        newImages.forEach(image => {
+          formData.append('images', {
+            uri: image.uri,
+            name: image.name,
+            type: image.type,
+          } as any);
+        });
+
+        await api.post(`/products/images`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+      }
+
       toast.show({
         placement: "top",
         render: ({ id }) => (

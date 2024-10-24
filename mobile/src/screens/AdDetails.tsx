@@ -51,47 +51,27 @@ export function AdDetails() {
   const toast = useToast();
   const { user } = useAuth();
 
-  const toggleExpandDescription = () => {
-    setExpandedDescription(!expandedDescription);
-  };
+  const toggleExpandDescription = () => setExpandedDescription(!expandedDescription);
 
-  const handleTextLayout = (e: any) => {
-    const { lines } = e.nativeEvent;
-    if (lines.length > 3) {
-      setIsLongText(true);
-    } else {
-      setIsLongText(false);
-    }
-  };
+  const handleTextLayout = ({ nativeEvent: { lines } }: any) => setIsLongText(lines.length > 3);
 
-  const handleGoBackEdit = () => {
-    navigation.navigate("adForm", { type: "ADD" });
-  }
+  const handleGoBackEdit = () => navigation.navigate("adForm", { type: "ADD" });
 
   const uploadImages = async (productId: string) => {
     const formData = new FormData();
     formData.append('product_id', productId);
 
-    for (const image of adData.product_images) {
-      const file = {
+    adData.product_images.forEach(image => {
+      formData.append('images', {
         uri: image.uri,
         name: image.name,
         type: image.type,
-      };
+      } as any);
+    });
 
-      formData.append('images', file as any);
-    }
-
-    try {
-      await api.post(`/products/images`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-      });
-    } catch (error) {
-      console.error("Erro ao fazer upload das imagens:", error);
-      throw error;
-    }
+    await api.post('/products/images', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
   };
 
   const publishAd = async () => {
