@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -6,7 +6,6 @@ import * as yup from "yup";
 import { useAuth } from "@hooks/useAuth";
 import { useNavigation } from "@react-navigation/native"; 
 import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { AppError } from "@utils/AppError";
 
@@ -38,17 +37,6 @@ export function SignIn() {
   const navigationAuth = useNavigation<AuthNavigatorRoutesProps>();
   const { signIn } = useAuth();
   const toast = useToast();
-
-  useEffect(() => {
-    const checkOnboarding = async () => {
-      const seen = await AsyncStorage.getItem('@hasSeenOnboarding');
-      if (seen !== 'true') {
-        navigationAuth.navigate("onboarding"); 
-      }
-    };
-
-    checkOnboarding();
-  }, [navigationAuth]);
 
   const handleNewAccount = () => {
     navigationAuth.navigate("signUp");

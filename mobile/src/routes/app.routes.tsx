@@ -160,7 +160,6 @@ export function AppRoutes() {
         }}
       />
 
-     
       <Tab.Screen
         name="notifications"
         component={Notifications}

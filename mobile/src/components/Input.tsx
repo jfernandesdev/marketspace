@@ -14,8 +14,6 @@ import {
   HStack
 } from "@gluestack-ui/themed";
 
-// import { FilterModalBottom } from "@components/FilterModalBottom";
-
 type InputProps = ComponentProps<typeof InputField> & {
   isReadOnly?: boolean;
   errorMessage?: string | null;

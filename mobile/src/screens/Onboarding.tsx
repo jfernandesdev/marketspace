@@ -1,35 +1,41 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { AuthNavigatorRoutesProps } from '@routes/auth.routes';
 
-import { Box, Text, Image, VStack } from "@gluestack-ui/themed";
+import { Box, Text, VStack } from "@gluestack-ui/themed";
 import { Button } from '@components/Button';
 import { ArrowRight } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
 
+import ImgIntro1 from '@assets/intro/intro-1.svg';
+import ImgIntro2 from '@assets/intro/intro-2.svg';
+import ImgIntro3 from '@assets/intro/intro-3.svg';
+import { Loading } from '@components/Loading';
+
 const onboardingData = [
   {
     title: 'Boas-vindas ao Marketspace!',
     text: 'Sua galáxia para comprar e vender com facilidade. Pronto para decolar?',
-    image: require('@assets/intro/intro-1.png'),
+    image: ImgIntro1,
   },
   {
     title: 'Trocas e Vendas',
     text: 'Dê uma nova vida ao que não usa! Trocas fáceis e rápidas!',
-    image: require('@assets/intro/intro-2.png'),
+    image: ImgIntro2,
   },
   {
     title: 'Produtos Variados',
     text: 'Descubra uma variedade de produtos incríveis. O que você está esperando?',
-    image: require('@assets/intro/intro-3.png'),
+    image: ImgIntro3,
   },
 ];
 
 export function Onboarding() {
   const [currentPage, setCurrentPage] = useState(0);
+  const [isLoading, setIsLoading] = useState(true); 
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
 
   const handleFinish = async () => {
@@ -42,6 +48,24 @@ export function Onboarding() {
     const pageIndex = Math.round(contentOffsetX / width);
     setCurrentPage(pageIndex);
   };
+
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      try {
+        const seen = await AsyncStorage.getItem('@hasSeenOnboarding');
+        if(seen === 'true') {
+          navigation.navigate("signIn");
+        }
+      } catch (error) {
+        console.error("Erro ao verificar o estado de onboarding:", error);
+      }
+    };
+    checkOnboarding();
+  }, []);
+
+  if (isLoading) {
+    return <Loading />
+  }
 
   return (
     <VStack flex={1} justifyContent="center" alignItems="center" bg="$gray200">
@@ -56,12 +80,7 @@ export function Onboarding() {
             <Text fontFamily="$heading" fontSize="$xl">{item.title}</Text>
             <Text fontFamily="$body" textAlign="center" mt="$2">{item.text}</Text>
             <Box my="$6">
-              <Image
-                source={item.image}
-                resizeMode="contain"
-                alt="Image Intro"
-                style={{ width: width * 0.9, height: width * 0.9 }}
-              />
+              <item.image width={width * 0.9} height={width * 0.9} />
             </Box>
            
             {index === onboardingData.length - 1 && (
