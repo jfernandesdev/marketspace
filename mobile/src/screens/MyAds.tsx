@@ -89,7 +89,7 @@ export function MyAds() {
           keyExtractor={(item, index) => item.id ? item.id : `${item.name}-${index}`}
           numColumns={2}
           columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 16 }}
-          contentContainerStyle={{ paddingBottom: 150 }}
+          contentContainerStyle={{ paddingBottom: 200 }}
         />
       </VStack>
     </VStack>

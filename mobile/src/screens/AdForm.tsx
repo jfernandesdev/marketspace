@@ -16,6 +16,7 @@ import { Label } from "@components/Label";
 import { Input } from "@components/Input";
 import { Radio } from "@components/Radio";
 import { Button } from "@components/Button";
+import { Loading } from "@components/Loading";
 import { ScreenHeader } from "@components/ScreenHeader";
 import { ToastMessage } from "@components/ToastMessage";
 import { ImagePickerCard } from "@components/ImagePickerCard";
@@ -34,6 +35,7 @@ import {
   useToast
 } from "@gluestack-ui/themed";
 
+
 interface FormData {
   name: string;
   description: string;
@@ -48,7 +50,8 @@ const schema = yup.object({
 
 export function AdForm() {
   const [isLoading, setIsLoading] = useState(false);
-
+  const [isLoadingPage, setIsLoadingPage] = useState(true);
+ 
   const [selectedImages, setSelectedImages] = useState<ProductImagesDto[]>([]);
   const [acceptTrade, setAcceptTrade] = useState(false);
   const [selectedCondition, setSelectedCondition] = useState<string>("new");
@@ -59,13 +62,14 @@ export function AdForm() {
   const toast = useToast();
   const route = useRoute();
 
-  const { type, adData } = route.params as { type: "ADD" | "EDIT"; adData?: any };
+  const { type, adData, isAddFlow } = route.params as { type: "ADD" | "EDIT"; adData?: any, isAddFlow?: boolean};
 
   const { control, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: {
       name: "",
       description: "",
+      price: undefined,
     },
   });
 
@@ -216,24 +220,45 @@ export function AdForm() {
   };
   
   useEffect(() => {
-    if (type === "EDIT" && adData) {
-      reset({
-        name: adData.name,
-        description: adData.description,
-        price: adData.price,
-      });
-      setAcceptTrade(adData.accept_trade);
-      setSelectedCondition(adData.is_new ? "new" : "used");
-      setPaymentMethods(adData.payment_methods);
-
-      const formattedImages = adData.product_images.map((image: ProductImagesDto) => ({
-        uri: `${api.defaults.baseURL}/images/${image.path}`,
-        id: image.id,
-      }));
-
-      setSelectedImages(formattedImages); 
+    try {
+      setIsLoadingPage(true);
+      if (isAddFlow || (type === "EDIT" && adData)) {
+        reset({
+          name: adData.name,
+          description: adData.description,
+          price: adData.price,
+        });
+        setAcceptTrade(adData.accept_trade);
+        setSelectedCondition(adData.is_new ? "new" : "used");
+        setPaymentMethods(adData.payment_methods);
+  
+        const formattedImages = adData.product_images.map((image: ProductImagesDto) => ({
+          uri: `${api.defaults.baseURL}/images/${image.path}`,
+          id: image.id,
+        }));
+  
+        setSelectedImages(formattedImages); 
+      } else if (type === "ADD") {
+        reset({
+          name: "",
+          description: "",
+          price: undefined
+        });
+        setSelectedImages([]);
+        setAcceptTrade(false);
+        setSelectedCondition("new");
+        setPaymentMethods([]);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoadingPage(false);
     }
   }, [type, adData, reset]);
+
+  if (isLoadingPage) {
+    return <Loading />
+  }
 
   return (
     <VStack flex={1} justifyContent="space-between" pb="$4">
