@@ -10,6 +10,7 @@ import { Avatar } from "@components/Avatar";
 import { ProductDto } from "@dtos/ProductDto";
 
 import { formatPrice } from "@utils/formatPrice";
+import { useAd } from "@hooks/useAd";
 
 type CardProductProps = {
   product: ProductDto;
@@ -46,14 +47,16 @@ const DisabledOverlay = () => (
 
 export function CardProduct({ product }: CardProductProps) {
   const navigation = useNavigation<AppNavigatorRoutesProps>();
+  const { saveEditedAdData } = useAd();
 
   const handleSeeDetailsAd = async (productId: string) => {
     try {
       const response = await api.get(`/products/${productId}`);
-      const product = response.data; 
-      navigation.navigate("adStack", { screen: "adDetails", params: { adData: product } });
+      const productData = response.data as ProductDto;
+      saveEditedAdData(productData);
+      navigation.navigate("adStack", { screen: "adDetails", params: { previewAd: false}});
     } catch (error) {
-      console.error("Erro ao buscar os detalhes do produto:", error);
+      console.error("Erro ao buscar os detalhes do produto no card:", error);
     }
   };
 

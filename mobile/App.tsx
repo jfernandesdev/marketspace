@@ -6,7 +6,9 @@ import { config } from "@gluestack-ui";
 
 import { Loading } from "@components/Loading";
 import { Routes } from "@routes/index";
+
 import { AuthContextProvider } from "@contexts/AuthContext";
+import { AdContextProvider } from "@contexts/AdContext";
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Karla_400Regular, Karla_700Bold });
@@ -16,7 +18,9 @@ export default function App() {
       <StatusBar style="dark" backgroundColor="transparent" translucent />
 
       <AuthContextProvider>
-        {fontsLoaded ? <Routes /> : <Loading />} 
+        <AdContextProvider>
+          {fontsLoaded ? <Routes /> : <Loading />} 
+        </AdContextProvider>
       </AuthContextProvider>
     </GluestackUIProvider>
   );

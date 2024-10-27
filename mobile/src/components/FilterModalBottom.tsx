@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Platform, TouchableOpacity } from "react-native";
 
 import { Button } from "@components/Button";
@@ -10,7 +10,6 @@ import { X } from "lucide-react-native";
 
 import {
   Icon,
-  Text,
   HStack,
   VStack,
   Heading,

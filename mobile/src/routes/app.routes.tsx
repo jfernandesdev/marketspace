@@ -13,8 +13,6 @@ import { MyAds } from "@screens/MyAds";
 import { AdDetails } from "@screens/AdDetails";
 import { AdForm } from "@screens/AdForm";
 
-import { ProductDto } from "@dtos/ProductDto";
-
 import ExitIcon from "@assets/exit.svg";
 import { Profile } from "@screens/Profile";
 import { useNavigation } from "@react-navigation/native";
@@ -35,11 +33,8 @@ type AppRoutes = {
 
 // Definindo as rotas do Stack Navigator
 export type AdStackRoutes = {
-  adDetails: { 
-    adData: ProductDto,
-    isEditFlow?: boolean 
-};
-  adForm: { type: "ADD" | "EDIT" };
+  adDetails: { previewAd?: boolean };  //header de preview
+  adForm: { type: "ADD" | "EDIT" }; //formulario de criação ou edição
 }
 
 type CombinedRoutes = AppRoutes & AdStackRoutes;

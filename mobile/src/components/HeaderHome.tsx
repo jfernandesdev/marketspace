@@ -1,11 +1,9 @@
 import { HStack, Text, VStack } from "@gluestack-ui/themed";
 
-import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "@hooks/useAuth";
 
 import { api } from "@services/api";
 
-import { AppNavigatorRoutesProps } from "@routes/app.routes";
 import { Avatar } from "@components/Avatar";
 
 import { getFirstName } from "@utils/firstName";
@@ -13,14 +11,6 @@ import { NotificationIcon } from "./NotificationIcon";
 
 export function HeaderHome() {
   const { user } = useAuth();
-  const navigation = useNavigation<AppNavigatorRoutesProps>();
-
-  const handleCreateAd = () => {
-    navigation.navigate("adStack", {
-      screen: "adForm", 
-      params: { type: "ADD" } 
-    });
-  }
 
   return (
     <HStack justifyContent="space-between">

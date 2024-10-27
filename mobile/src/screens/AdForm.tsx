@@ -6,6 +6,7 @@ import * as yup from "yup";
 
 import { api } from '@services/api';
 
+import { useAd } from "@hooks/useAd";
 import { useAuth } from "@hooks/useAuth";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
@@ -34,13 +35,7 @@ import {
   TextareaInput,
   useToast
 } from "@gluestack-ui/themed";
-
-
-interface FormData {
-  name: string;
-  description: string;
-  price: number;
-}
+import { ProductDto } from "@dtos/ProductDto";
 
 const schema = yup.object({
   name: yup.string().required("Informe o título do anúncio"),
@@ -48,21 +43,25 @@ const schema = yup.object({
   price: yup.number().required("Informe o valor do produto").positive("O valor deve ser positivo")
 }).required();
 
+type FormData = yup.InferType<typeof schema>;
+
+// Formulário de adicionar/editar anuncio
 export function AdForm() {
-  const [isLoading, setIsLoading] = useState(false);
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
+  const { user } = useAuth();
+  const { editedAdData, saveEditedAdData, clearAdData } = useAd();
+  const toast = useToast();
+  
+  const route = useRoute();
+  const { type } = route.params as { type: "ADD" | "EDIT" };
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingPage, setIsLoadingPage] = useState(true);
  
   const [selectedImages, setSelectedImages] = useState<ProductImagesDto[]>([]);
   const [acceptTrade, setAcceptTrade] = useState(false);
   const [selectedCondition, setSelectedCondition] = useState<string>("new");
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodsDto[]>([]);
-
-  const navigation = useNavigation<AppNavigatorRoutesProps>();
-  const { user } = useAuth();
-  const toast = useToast();
-  const route = useRoute();
-
-  const { type, adData, isAddFlow } = route.params as { type: "ADD" | "EDIT"; adData?: any, isAddFlow?: boolean};
 
   const { control, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
     resolver: yupResolver(schema),
@@ -75,7 +74,7 @@ export function AdForm() {
 
   const handleNext = (data: FormData) => {
     try {
-      setIsLoading(true);
+      setIsSubmitting(true);
       if (selectedImages.length === 0) {
         return toast.show({
           placement: "top",
@@ -104,7 +103,7 @@ export function AdForm() {
         })
       }
 
-      const formData = {
+      const formData: ProductDto = {
         ...data,
         is_new: selectedCondition === "new",
         accept_trade: acceptTrade,
@@ -114,23 +113,24 @@ export function AdForm() {
         user_id: user.id
       };
 
-      navigation.navigate("adStack", {
-        screen: "adDetails",
-        params: {
-          adData: formData,
-          isEditFlow: true
-        }
-      });
+      saveEditedAdData(formData);
+      
+      //Preview da nova publicação
+      navigation.navigate("adStack", { screen: "adDetails", params: { previewAd: true } });
 
     } catch (error) {
       throw error;
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   }
 
   const resetForm = ()  => {
-    reset();
+    reset({
+      name: "",
+      description: "",
+      price: undefined,
+    });
     setAcceptTrade(false);
     setSelectedCondition("new");
     setSelectedImages([]);
@@ -138,13 +138,14 @@ export function AdForm() {
   }
 
   const handleCancel = () => {
+    clearAdData();
     resetForm();
     navigation.navigate("home");
   }
 
   const handleUpdateAd = async (data: FormData) => {
     try {
-      setIsLoading(true);
+      setIsSubmitting(true);
       
       const requestData = {
         ...data,
@@ -154,53 +155,56 @@ export function AdForm() {
         is_active: true,
       }
 
-      await api.put(`/products/${adData.id}`, requestData);
+      if (editedAdData && editedAdData.product_images) {
+        await api.put(`/products/${editedAdData.id}`, requestData);
 
-      // Encontrar imagens removidas (existentes antes mas não mais na lista)
-      const removedImages = adData.product_images
-        .filter((image: ProductImagesDto) => 
-          !selectedImages.some((img: ProductImagesDto) => img.id === image.id))
-        .map((image: ProductImagesDto) => image.id);
-
-      if (removedImages.length > 0) {
-        await api.delete(`/products/images`, {
-          data: { productImagesIds: removedImages },
+        // Encontrar imagens removidas (existentes antes mas não mais na lista)
+        const removedImages = editedAdData.product_images
+          .filter((image: ProductImagesDto) => 
+            !selectedImages.some((img: ProductImagesDto) => img.id === image.id))
+          .map((image: ProductImagesDto) => image.id);
+  
+        if (removedImages.length > 0) {
+          await api.delete(`/products/images`, {
+            data: { productImagesIds: removedImages },
+          });
+        }
+  
+        // Fazer upload de novas imagens (aquelas sem ID)
+        const newImages = selectedImages.filter(image => !image.id);
+  
+        if (newImages.length > 0 && editedAdData.id) {
+          const formData = new FormData();
+          formData.append("product_id", editedAdData.id);
+  
+          newImages.forEach(image => {
+            formData.append('images', {
+              uri: image.uri,
+              name: image.name,
+              type: image.type,
+            } as any);
+          });
+  
+          await api.post(`/products/images`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
+        }
+  
+        toast.show({
+          placement: "top",
+          render: ({ id }) => (
+            <ToastMessage
+              id={id}
+              action="success"
+              title="Anúncio editado com sucesso!"
+              align="center"
+            />
+          )
         });
+  
+        navigation.navigate("myAds");
       }
 
-      // Fazer upload de novas imagens (aquelas sem ID)
-      const newImages = selectedImages.filter(image => !image.id);
-
-      if (newImages.length > 0) {
-        const formData = new FormData();
-        formData.append("product_id", adData.id);
-
-        newImages.forEach(image => {
-          formData.append('images', {
-            uri: image.uri,
-            name: image.name,
-            type: image.type,
-          } as any);
-        });
-
-        await api.post(`/products/images`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-      }
-
-      toast.show({
-        placement: "top",
-        render: ({ id }) => (
-          <ToastMessage
-            id={id}
-            action="success"
-            title="Anúncio editado com sucesso!"
-            align="center"
-          />
-        )
-      });
-
-      navigation.navigate("myAds");
     } catch (error) {
       toast.show({
         placement: "top",
@@ -215,54 +219,63 @@ export function AdForm() {
       });
       console.error("Erro ao atualizar o produto:", error);
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
   
   useEffect(() => {
+    setIsLoadingPage(true);
     try {
-      setIsLoadingPage(true);
-      if (isAddFlow || (type === "EDIT" && adData)) {
+      if (editedAdData && Object.keys(editedAdData).length > 0) {
         reset({
-          name: adData.name,
-          description: adData.description,
-          price: adData.price,
+          name: editedAdData.name,
+          description: editedAdData.description,
+          price: editedAdData.price,
         });
-        setAcceptTrade(adData.accept_trade);
-        setSelectedCondition(adData.is_new ? "new" : "used");
-        setPaymentMethods(adData.payment_methods);
-  
-        const formattedImages = adData.product_images.map((image: ProductImagesDto) => ({
-          uri: `${api.defaults.baseURL}/images/${image.path}`,
-          id: image.id,
-        }));
-  
-        setSelectedImages(formattedImages); 
-      } else if (type === "ADD") {
-        reset({
-          name: "",
-          description: "",
-          price: undefined
-        });
-        setSelectedImages([]);
-        setAcceptTrade(false);
-        setSelectedCondition("new");
-        setPaymentMethods([]);
+        setAcceptTrade(editedAdData.accept_trade);
+        setSelectedCondition(editedAdData.is_new ? "new" : "used");
+        setPaymentMethods(editedAdData.payment_methods);
+
+        if (editedAdData && Array.isArray(editedAdData.product_images) && editedAdData.product_images.length > 0) {
+          const formattedImages = editedAdData.product_images.map((image: ProductImagesDto) => {
+            if (image.id) {
+              return {
+                uri: `${api.defaults.baseURL}/images/${image.path}`,
+                id: image.id,
+              };
+            } else {
+              return {
+                uri: image.uri,
+                name: image.name,
+                type: image.type,
+              };
+            }
+          });
+
+          setSelectedImages(formattedImages);
+        }
+      } else {
+        resetForm();
       }
     } catch (error) {
       console.error(error);
     } finally {
       setIsLoadingPage(false);
     }
-  }, [type, adData, reset]);
+  }, [editedAdData, reset]);
 
+  
   if (isLoadingPage) {
     return <Loading />
   }
 
   return (
     <VStack flex={1} justifyContent="space-between" pb="$4">
-      <ScreenHeader title={type === "EDIT" ? "Editar anúncio" : "Criar anúncio"} showBackButton />
+      <ScreenHeader 
+        title={type === "EDIT" ? "Editar anúncio" : "Criar anúncio"} 
+        showBackButton 
+        onResetForm={resetForm}
+      />
 
       <ScrollView flex={1} px="$8" mb="$4">
         {/* Imagens */}
@@ -397,7 +410,7 @@ export function AdForm() {
           w="48%"
           bgVariant="dark"
           onPress={type === 'EDIT' ? handleSubmit(handleUpdateAd) : handleSubmit(handleNext)}
-          isLoading={isLoading}
+          isLoading={isSubmitting}
         />
       </HStack>
     </VStack>

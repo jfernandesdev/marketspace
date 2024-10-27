@@ -1,4 +1,3 @@
-
 import { TouchableOpacity } from "react-native";
 import { Text, VStack, HStack, Icon } from "@gluestack-ui/themed";
 

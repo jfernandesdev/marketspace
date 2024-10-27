@@ -4,52 +4,36 @@ import { HStack, Heading, Icon, View } from "@gluestack-ui/themed";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
 import { useNavigation } from "@react-navigation/native";
 
-import { ArrowLeft, Plus, PenLine } from "lucide-react-native";
-import { ProductDto } from "@dtos/ProductDto";
-import { useAuth } from "@hooks/useAuth";
+import { ArrowLeft, PenLine } from "lucide-react-native";
+
+import { useAd } from "@hooks/useAd";
 
 type ScreenHeaderProps = {
   title?: string;
   showBackButton?: boolean;
-  showAddButton?: boolean;
   showEditButton?: boolean;
   onEditPress?: () => void;
-  adData?: ProductDto;
+  onResetForm?: () => void;
 }
 
 export function ScreenHeader({ 
   title,
   showBackButton,
-  showAddButton,
   showEditButton,
   onEditPress,
-  adData
+  onResetForm
 }: ScreenHeaderProps) {
   const navigation = useNavigation<AppNavigatorRoutesProps>();
-  const { user } = useAuth();
-
-  const handleFormAd = (type: "ADD" | "EDIT") => {
-    navigation.navigate("adStack", {
-      screen: "adForm",
-      params: { type, adData }
-    });
-  }
+  const { clearAdData } = useAd();
 
   const handleGoBack = () => {
-    const state = navigation.getState();
-    const currentRoute = state.routes[state.index];
+    clearAdData();
 
-    if (currentRoute.params && 'adData' in currentRoute.params && currentRoute.params.adData) {
-      const adData = currentRoute.params.adData;
-
-      if (adData.user_id === user.id) {
-        navigation.navigate("myAds");
-      } else {
-        navigation.navigate("home");
-      }
-    } else {
-      navigation.navigate("home");
+    if (onResetForm) {
+      onResetForm();
     }
+
+    navigation.navigate("home");
   }
 
   return(
@@ -62,19 +46,13 @@ export function ScreenHeader({
 
       {title ? <Heading>{title}</Heading> : <View />}
 
-      {showAddButton && (
-        <TouchableOpacity onPress={() => handleFormAd("ADD")}>
-        <Icon as={Plus} size="xl" />
-        </TouchableOpacity>
-      )}
-
       {showEditButton && (
         <TouchableOpacity onPress={onEditPress}>
           <Icon as={PenLine} size="xl" />
         </TouchableOpacity>
       )}
 
-      {(!showAddButton && !showEditButton) && <View />}
+      {(!showEditButton) && <View />}
     </HStack>
   );
 }

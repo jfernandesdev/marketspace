@@ -35,56 +35,67 @@ import {
   useToast, 
   ModalBackdrop 
 } from "@gluestack-ui/themed";
+import { AppError } from "@utils/AppError";
+import { useAd } from "@hooks/useAd";
 
+// Detalhes do anúncio
 export function AdDetails() {
   const route = useRoute<RouteProp<AdStackRoutes, 'adDetails'>>();
-  let { adData, isEditFlow } = route.params;
-
-  const [expandedDescription, setExpandedDescription] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [isActive, setIsActive] = useState(adData.is_active);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isExcluding, setIsExcluding] = useState(false);
-  const [isLongText, setIsLongText] = useState(false);
+  const { previewAd } = route.params;
 
   const navigation = useNavigation<AppNavigatorRoutesProps>();
   const toast = useToast();
   const { user } = useAuth();
+  const { editedAdData, saveEditedAdData, clearAdData } = useAd();
+
+  const [expandedDescription, setExpandedDescription] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isActive, setIsActive] = useState(editedAdData?.is_active);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isExcluding, setIsExcluding] = useState(false);
+  const [isLongText, setIsLongText] = useState(false);
 
   const toggleExpandDescription = () => setExpandedDescription(!expandedDescription);
 
   const handleTextLayout = ({ nativeEvent: { lines } }: any) => setIsLongText(lines.length > 3);
 
-  const handleGoBackEdit = () => navigation.navigate("adForm", { type: "ADD" });
+  const handleGoBackEdit = () => {
+    if (editedAdData) {
+      saveEditedAdData(editedAdData);
+    }
+    navigation.navigate("adForm", { type: "ADD" })
+  };
 
   const uploadImages = async (productId: string) => {
     const formData = new FormData();
     formData.append('product_id', productId);
-
-    adData.product_images.forEach(image => {
-      formData.append('images', {
-        uri: image.uri,
-        name: image.name,
-        type: image.type,
-      } as any);
-    });
-
+      editedAdData && editedAdData.product_images.forEach(image => {
+        formData.append('images', {
+          uri: image.uri,
+          name: image.name,
+          type: image.type,
+        } as any);
+      });
+  
     await api.post('/products/images', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   };
 
+  // Criar anúncio
   const publishAd = async () => {
     try {
       setIsSubmitting(true);
 
       const requestData = {
-        name: adData.name,
-        description: adData.description,
-        is_new: adData.is_new,
-        price: adData.price,
-        accept_trade: adData.accept_trade,
-        payment_methods: adData.payment_methods.map(method => method.key),
+        name: editedAdData?.name,
+        description: editedAdData?.description,
+        is_new: editedAdData?.is_new,
+        price: editedAdData?.price,
+        accept_trade: editedAdData?.accept_trade,
+        payment_methods: editedAdData && editedAdData.payment_methods && 
+          editedAdData.payment_methods.map(method => method.key
+        ),
       }
 
       const response = await api.post('/products', requestData);
@@ -95,6 +106,7 @@ export function AdDetails() {
         await uploadImages(productId);
       }
 
+      clearAdData();
       navigation.navigate("myAds");
 
       toast.show({
@@ -109,13 +121,16 @@ export function AdDetails() {
         )
       });
     } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError ? error.message : "Não foi possível cria anúncio. Tente novamente.";
+      
       toast.show({
         placement: "top",
         render: ({ id }) => (
           <ToastMessage
             id={id}
             action="error"
-            title="Erro ao publicar o anúncio."
+            title={title}
             align="center"
           />
         )
@@ -126,8 +141,9 @@ export function AdDetails() {
     }
   };
 
+  // Redirecionar para o whatsapp
   const handleContactSeller = () => {
-    if (!adData.user || !adData.user.tel) {
+    if (!editedAdData?.user || !editedAdData?.user.tel) {
       toast.show({
         placement: "top",
         render: ({ id }) => (
@@ -142,8 +158,8 @@ export function AdDetails() {
       return;
     }
 
-    const message = `Olá ${adData.user.name}, vi seu anúncio "${adData.name} - R$ ${formatPrice(adData.price)}" no Marketspace. Ainda está disponível?`;
-    const whatsappUrl = `https://wa.me/${adData.user.tel}?text=${encodeURIComponent(message)}`;
+    const message = `Olá ${editedAdData?.user.name}, vi seu anúncio "${editedAdData?.name} - R$ ${formatPrice(editedAdData?.price)}" no Marketspace. Ainda está disponível?`;
+    const whatsappUrl = `https://wa.me/${editedAdData?.user.tel}?text=${encodeURIComponent(message)}`;
 
     Linking.openURL(whatsappUrl).catch((error) => {
       console.error("Erro ao abrir o WhatsApp:", error);
@@ -161,11 +177,12 @@ export function AdDetails() {
     });
   };
 
+  // Ativar/desativar anúncio
   const toggleAdStatus = async () => {
     try {
       setIsSubmitting(true);
       const newStatus = !isActive;
-      await api.patch(`/products/${adData.id}`, { is_active: newStatus });
+      await api.patch(`/products/${editedAdData?.id}`, { is_active: newStatus });
       
       setIsActive(newStatus);
 
@@ -181,6 +198,9 @@ export function AdDetails() {
         )
       });
     } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError ? error.message : "Erro ao atualizar o status. Tente novamente.";
+
       console.error("Erro ao atualizar o status do anúncio:", error);
       toast.show({
         placement: "top",
@@ -188,7 +208,7 @@ export function AdDetails() {
           <ToastMessage
             id={id}
             action="error"
-            title="Erro ao atualizar o status do anúncio."
+            title={title}
             align="center"
           />
         )
@@ -198,25 +218,31 @@ export function AdDetails() {
     }
   };
 
+  // Excluir anúncio
   const handleDeleteAd = async () => {
     setIsExcluding(true);
     try {
-      await api.delete(`/products/${adData.id}`);
-      toast.show({
-        placement: "top",
-        render: ({ id }) => (
-          <ToastMessage
-            id={id}
-            action="success"
-            title="Anúncio excluído com sucesso!"
-            align="center"
-          />
-        )
-      });
-
-      navigation.navigate("myAds");
-
+      if (editedAdData && editedAdData.id) {
+        await api.delete(`/products/${editedAdData?.id}`);
+        toast.show({
+          placement: "top",
+          render: ({ id }) => (
+            <ToastMessage
+              id={id}
+              action="success"
+              title="Anúncio excluído com sucesso!"
+              align="center"
+            />
+          )
+        });
+  
+        clearAdData();
+        navigation.navigate("myAds");
+      }
     } catch (error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError ? error.message : "Erro ao excluir anúncio. Tente novamente.";
+
       console.error("Erro ao excluir o anúncio:", error);
       toast.show({
         placement: "top",
@@ -224,7 +250,7 @@ export function AdDetails() {
           <ToastMessage
             id={id}
             action="error"
-            title="Erro ao excluir o anúncio."
+            title={title}
             align="center"
           />
         )
@@ -235,49 +261,50 @@ export function AdDetails() {
     }
   };
 
+  //Editar anúncio
   const handleEditPress = () => {
-    navigation.navigate("adStack", {
-      screen: "adForm",
-      params: { type: "EDIT", adData },
-    });
+    if (editedAdData) {
+      saveEditedAdData(editedAdData);
+    }
+    navigation.navigate("adStack", { screen: "adForm", params: { type: "EDIT"}});
   };
 
   useEffect(() => {
-    setIsActive(adData.is_active);
-  }, [adData]);
+    setIsActive(editedAdData?.is_active);
+  }, [editedAdData]);
 
   return (
     <VStack flex={1} justifyContent="space-between" pb="$6">
-      {isEditFlow 
+      {previewAd !== undefined && previewAd
         ? <PreviewHeader /> 
         : <ScreenHeader 
             showBackButton 
-            showEditButton={user.id === adData.user_id} 
+          showEditButton={user.id === editedAdData?.user_id} 
           onEditPress={handleEditPress}
           />}
 
       <VStack flex={1}>
-        <ImageSlider images={adData.product_images} isActive={isActive} />
+        <ImageSlider images={editedAdData ? editedAdData.product_images : []} isActive={isActive} />
 
         <ScrollView px="$8">
           <HStack alignItems="center" space="sm" py="$3">
             <Avatar
-              image={`${api.defaults.baseURL}/images/${adData.user?.avatar || user.avatar}`}
-              textFallback={adData.user?.name || user.name}
+              image={`${api.defaults.baseURL}/images/${editedAdData?.user?.avatar || user.avatar}`}
+              textFallback={editedAdData?.user?.name || user.name}
               size="sm"
             />
-            <Text>{adData.user?.name || user.name}</Text>
+            <Text>{editedAdData?.user?.name || user.name}</Text>
           </HStack>
 
           <Badge size="sm" bg="$gray300" rounded="$full" w={50} justifyContent="center">
-            <BadgeText color="$gray600" fontSize="$2xs">{adData.is_new ? "NOVO" : "USADO"}</BadgeText>
+            <BadgeText color="$gray600" fontSize="$2xs">{editedAdData?.is_new ? "NOVO" : "USADO"}</BadgeText>
           </Badge >
 
           <HStack alignItems="center" justifyContent="space-between" mt="$1" mb="$2">
-            <Heading fontFamily="$heading" fontSize="$xl" color="$gray700">{adData.name}</Heading>
+            <Heading fontFamily="$heading" fontSize="$xl" color="$gray700">{editedAdData?.name}</Heading>
             <Text fontFamily="$heading" fontSize="$xl" color="$brand400">
               <Text fontFamily="$heading" fontSize="$sm" color="$brand400">R$ </Text>
-              {formatPrice(adData.price)}
+              {editedAdData && editedAdData.price && formatPrice(editedAdData?.price) }
             </Text>
           </HStack>
 
@@ -289,7 +316,7 @@ export function AdDetails() {
               fontSize="$sm"
               color="$gray600"
             >
-              {adData.description}
+              {editedAdData?.description}
             </Text>
 
             {isLongText && (
@@ -304,21 +331,21 @@ export function AdDetails() {
           <HStack py="$1" space="md">
             <Label text="Aceita troca?" />
             <Text fontFamily="$body" color="$gray600" fontSize="$sm">
-              {adData.accept_trade ? "Sim" : "Não"}
+              {editedAdData?.accept_trade ? "Sim" : "Não"}
             </Text>
           </HStack>
 
           <VStack mt="$1">
             <Label text="Meios de pagamento:" />
-            <PaymentMethodsList paymentMethods={adData.payment_methods} />
+            <PaymentMethodsList paymentMethods={editedAdData && editedAdData?.payment_methods ? editedAdData?.payment_methods : []} />
           </VStack>
 
         </ScrollView>
       </VStack>
 
       <VStack px="$8" mt="$2">
-        {!isEditFlow && (
-          user.id === adData.user_id ? (
+        {!previewAd && (
+          user.id === editedAdData?.user_id ? (
             <>
               <Button
                 title={isActive ? "Desativar anúncio" : "Reativar anúncio"}
@@ -347,7 +374,7 @@ export function AdDetails() {
         )}
 
         {/* Fluxo cadastro/edição ad */}
-        {isEditFlow && (
+        {previewAd && (
           <HStack space="md">
             <Button
               title="Voltar e editar"
