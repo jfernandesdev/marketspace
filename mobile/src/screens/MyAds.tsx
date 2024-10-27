@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { FlatList } from "react-native";
 import { useFocusEffect } from '@react-navigation/native';
-import { VStack, HStack, Text } from "@gluestack-ui/themed";
+import { VStack, HStack, Text, Center } from "@gluestack-ui/themed";
 
 import { api } from "@services/api";
 
@@ -10,6 +10,8 @@ import { ProductDto } from "@dtos/ProductDto";
 import { ScreenHeader } from "@components/ScreenHeader";
 import { CardProduct } from "@components/CardProduct";
 import { Select } from "@components/Select";
+
+import EmptyImg from "@assets/et-empty.svg";
 
 type ProductStatus = 'todos' | 'ativo' | 'inativo';
 
@@ -46,6 +48,18 @@ export function MyAds() {
   const formatProductCountText = (count: number) => {
     return `${count} anúncio${count > 1 ? 's' : ''}`;
   };
+
+  const EmptyState = () => (
+    <Center minHeight="$full">
+      <EmptyImg />
+      <Text fontSize="$lg" fontWeight="bold" color="gray.700" py="$2" mt="$3">
+        Sem nada orbitando por aqui...
+      </Text>
+      <Text fontSize="$md" color="gray.500" textAlign="center">
+        Parece que sua galáxia está vazia! Crie um anúncio e coloque suas estrelas no Marketspace.
+      </Text>
+    </Center>
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -90,6 +104,7 @@ export function MyAds() {
           numColumns={2}
           columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 16 }}
           contentContainerStyle={{ paddingBottom: 200 }}
+          ListEmptyComponent={!isLoading ? <EmptyState /> : null}
         />
       </VStack>
     </VStack>

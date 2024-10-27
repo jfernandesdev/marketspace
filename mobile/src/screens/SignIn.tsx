@@ -11,7 +11,6 @@ import { AppError } from "@utils/AppError";
 
 import { Box, ScrollView, Text, VStack, useToast } from "@gluestack-ui/themed";
 
-
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 import { ToastMessage } from "@components/ToastMessage";
