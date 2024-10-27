@@ -18,13 +18,19 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F7F7F8"
-      }
+      },
+      "package": "com.jfernandes.dev.marketspace"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "09e6bd1a-5597-43da-84f5-5010b571c682"
+      }
+    }
   }
 }

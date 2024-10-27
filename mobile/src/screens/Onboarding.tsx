@@ -15,6 +15,8 @@ import ImgIntro2 from '@assets/intro/intro-2.svg';
 import ImgIntro3 from '@assets/intro/intro-3.svg';
 import { Loading } from '@components/Loading';
 
+import { SEEN_ONBOARDING } from '@storage/storageConfig';
+
 const onboardingData = [
   {
     title: 'Boas-vindas ao Marketspace!',
@@ -41,7 +43,7 @@ export function Onboarding() {
   const scrollViewRef = React.useRef<ScrollView>(null);
 
   const handleFinish = async () => {
-    await AsyncStorage.setItem('@hasSeenOnboarding', 'true');
+    await AsyncStorage.setItem(SEEN_ONBOARDING, 'true');
     navigation.navigate("signIn");
   };
 
@@ -65,14 +67,14 @@ export function Onboarding() {
   };
 
   const handleSkip = async () => {
-    await AsyncStorage.setItem('@hasSeenOnboarding', 'true');
+    await AsyncStorage.setItem(SEEN_ONBOARDING, 'true');
     navigation.navigate("signIn");
   };
 
   useEffect(() => {
     const checkOnboarding = async () => {
       try {
-        const seen = await AsyncStorage.getItem('@hasSeenOnboarding');
+        const seen = await AsyncStorage.getItem(SEEN_ONBOARDING);
         if(seen === 'true') {
           navigation.navigate("signIn");
         }
