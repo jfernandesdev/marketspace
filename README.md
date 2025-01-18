@@ -1,4 +1,4 @@
-# Marketspace <img src="" style="width: 50px;"/>
+# Marketspace <img src="https://github.com/jfernandesdev/marketspace/blob/efab1ab636871fe9ec72b011c7fab64b25c86a3f/mobile/src/assets/logoIcon.svg" style="width: 100px;"/>
 
 ### Descrição : 
 Um aplicativo de anúncio de produtos estilo OLX
@@ -6,7 +6,8 @@ Um aplicativo de anúncio de produtos estilo OLX
 - [x] Login e cadastro de usuários;
 - [x] Gerenciamento de produtos (cadastro, edição, exclusão, ativar/desativar);
 - [x] Listagem de produtos com busca e filtros;
-- [x] Envio de múltiplas imagens;
+- [x] Gerenciamento de múltiplas imagens;
+- [x] Integração API.
 
 ---
 
@@ -35,13 +36,13 @@ Um aplicativo de anúncio de produtos estilo OLX
 
 | Onboard | SignIn | SignUp | Home | Filter |
 | --- | --- | --- | --- | --- |
-| <img src="" /> | <img src="" /> | <img src="" /> | <img src="" /> | <img src="" /> |
+| <img src="https://github.com/jfernandesdev/marketspace/blob/efab1ab636871fe9ec72b011c7fab64b25c86a3f/mobile/assets/screendocs/onboard.jpg" width="250px" /> | <img src="https://github.com/jfernandesdev/marketspace/blob/efab1ab636871fe9ec72b011c7fab64b25c86a3f/mobile/assets/screendocs/signin.jpg"  width="250px" /> | <img src="https://github.com/jfernandesdev/marketspace/blob/efab1ab636871fe9ec72b011c7fab64b25c86a3f/mobile/assets/screendocs/signup.jpg"  width="250px" /> | <img src="https://github.com/jfernandesdev/marketspace/blob/efab1ab636871fe9ec72b011c7fab64b25c86a3f/mobile/assets/screendocs/home.jpg"  width="250px" /> | <img src="https://github.com/jfernandesdev/marketspace/blob/efab1ab636871fe9ec72b011c7fab64b25c86a3f/mobile/assets/screendocs/filter.jpg"  width="250px" /> |
 
 ---
 
 | MyAds | Details | Add Ad | Preview | Delete |
 | --- | --- | --- | --- | --- |
-| <img src="" /> | <img src="" /> | <img src="" /> | <img src="" /> | <img src="" /> |
+| <img src="https://github.com/jfernandesdev/marketspace/blob/efab1ab636871fe9ec72b011c7fab64b25c86a3f/mobile/assets/screendocs/my-ads.jpg"  width="250px" /> | <img src="https://github.com/jfernandesdev/marketspace/blob/efab1ab636871fe9ec72b011c7fab64b25c86a3f/mobile/assets/screendocs/details.jpg"  width="250px" /> | <img src="https://github.com/jfernandesdev/marketspace/blob/efab1ab636871fe9ec72b011c7fab64b25c86a3f/mobile/assets/screendocs/add-ad.jpg"  width="250px" /> | <img src="https://github.com/jfernandesdev/marketspace/blob/efab1ab636871fe9ec72b011c7fab64b25c86a3f/mobile/assets/screendocs/preview.jpg"  width="250px" /> | <img src="https://github.com/jfernandesdev/marketspace/blob/efab1ab636871fe9ec72b011c7fab64b25c86a3f/mobile/assets/screendocs/delete.jpg"  width="250px" /> |
 
 ---
 
